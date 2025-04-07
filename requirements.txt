@@ -1,0 +1,4 @@
+flask==2.0.1
+numpy==1.21.1
+Werkzeug==2.0.1
+gunicorn>=21.2.0
