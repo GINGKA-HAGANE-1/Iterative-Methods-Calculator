@@ -1,9 +1,4 @@
-<<<<<<< HEAD
 flask==2.0.1
 numpy==1.21.1
 Werkzeug==2.0.1
-=======
-flask>=3.0.0
-numpy>=1.26.0
->>>>>>> dee6f34da0bc354969922d34369af105c8b85b72
 gunicorn>=21.2.0
