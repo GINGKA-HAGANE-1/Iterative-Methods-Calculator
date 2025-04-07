@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Iterative Methods Calculator
 
 A web-based calculator for solving systems of linear equations using Jacobi and Gauss-Seidel iterative methods.
