@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html>
 <head>
@@ -122,4 +123,130 @@
         }
     </script>
 </body>
+=======
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Iterative Methods Calculator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Add this right after <body> -->
+    <div class="container">
+        <div class="logo-section">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <div class="author-name">Nadhanda sasi, sasi das</div>
+        </div>
+        <h1>Iterative Methods Calculator</h1>
+        
+        <div class="input-section">
+            <h2>Input Matrix and Vector</h2>
+            <div class="matrix-input">
+                <h3>Matrix A (3x3)</h3>
+                <div class="matrix">
+                    <input type="number" step="any" class="matrix-cell" data-row="0" data-col="0">
+                    <input type="number" step="any" class="matrix-cell" data-row="0" data-col="1">
+                    <input type="number" step="any" class="matrix-cell" data-row="0" data-col="2">
+                    <input type="number" step="any" class="matrix-cell" data-row="1" data-col="0">
+                    <input type="number" step="any" class="matrix-cell" data-row="1" data-col="1">
+                    <input type="number" step="any" class="matrix-cell" data-row="1" data-col="2">
+                    <input type="number" step="any" class="matrix-cell" data-row="2" data-col="0">
+                    <input type="number" step="any" class="matrix-cell" data-row="2" data-col="1">
+                    <input type="number" step="any" class="matrix-cell" data-row="2" data-col="2">
+                </div>
+            </div>
+            
+            <div class="vector-input">
+                <h3>Vector b</h3>
+                <div class="vector">
+                    <input type="number" step="any" class="vector-cell">
+                    <input type="number" step="any" class="vector-cell">
+                    <input type="number" step="any" class="vector-cell">
+                </div>
+            </div>
+            
+            <button onclick="solve()">Solve</button>
+        </div>
+        
+        <div class="results">
+            <div class="method-result" id="jacobi-result">
+                <h2>Jacobi Method</h2>
+                <div class="iterations"></div>
+            </div>
+            
+            <div class="method-result" id="gauss-seidel-result">
+                <h2>Gauss-Seidel Method</h2>
+                <div class="iterations"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function solve() {
+            const matrix = [];
+            for (let i = 0; i < 3; i++) {
+                matrix[i] = [];
+                for (let j = 0; j < 3; j++) {
+                    matrix[i][j] = parseFloat(document.querySelector(`.matrix-cell[data-row="${i}"][data-col="${j}"]`).value);
+                }
+            }
+            
+            const vector = Array.from(document.querySelectorAll('.vector-cell')).map(input => parseFloat(input.value));
+            
+            fetch('/solve', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    matrix: matrix,
+                    vector: vector
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayResults('jacobi', data.jacobi);
+                displayResults('gauss-seidel', data.gauss_seidel);
+            });
+        }
+        
+        function displayResults(method, results) {
+            const container = document.querySelector(`#${method}-result .iterations`);
+            container.innerHTML = '';
+            
+            results.iterations.forEach(iteration => {
+                const iterationDiv = document.createElement('div');
+                iterationDiv.className = 'iteration';
+                
+                iterationDiv.innerHTML = `
+                    <h3>Iteration ${iteration.iteration}</h3>
+                    <div class="values">
+                        x = ${iteration.values[0]}<br>
+                        y = ${iteration.values[1]}<br>
+                        z = ${iteration.values[2]}
+                    </div>
+                    ${iteration.steps.map(step => `<div class="step">${step}</div>`).join('')}
+                `;
+                
+                container.appendChild(iterationDiv);
+            });
+            
+            const finalDiv = document.createElement('div');
+            finalDiv.className = 'final-result';
+            finalDiv.innerHTML = `
+                <h3>Final Result</h3>
+                <div class="values">
+                    x = ${results.final[0]}<br>
+                    y = ${results.final[1]}<br>
+                    z = ${results.final[2]}
+                </div>
+                <div class="convergence">
+                    ${results.converged ? 'Method converged' : 'Method did not converge'}
+                </div>
+            `;
+            container.appendChild(finalDiv);
+        }
+    </script>
+</body>
+>>>>>>> dee6f34da0bc354969922d34369af105c8b85b72
 </html>
