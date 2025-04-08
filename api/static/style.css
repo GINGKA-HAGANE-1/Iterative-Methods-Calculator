@@ -37,7 +37,39 @@ h1 {
 .vector {
     display: grid;
     grid-template-columns: repeat(3, 80px);
-    gap: 5px;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: start;
+}
+
+.vector-input {
+    margin: 20px 0;
+}
+
+.vector-table {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vector-label {
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+.vector {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.vector input {
+    width: 80px;
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }
 
 input[type="number"] {
@@ -70,11 +102,39 @@ button:hover {
     gap: 20px;
 }
 
+.method-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    border: none;
+    background: #e0e0e0;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.tab-button.active {
+    background: #007bff;
+    color: white;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
 .method-result {
-    background-color: white;
+    margin-top: 20px;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }
 
 .iteration {
@@ -124,4 +184,179 @@ button:hover {
     font-size: 1.2em;
     color: #333;
     font-style: italic;
+}
+
+.vector-table {
+    margin: 10px auto;
+    border-collapse: collapse;
+}
+
+.vector-table td {
+    padding: 5px 10px;
+}
+
+.vector-table td:first-child {
+    font-family: 'Times New Roman', serif;
+    font-style: italic;
+    text-align: right;
+}
+
+.vector-table input {
+    width: 100px;
+}
+
+.matrix-steps {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 10px 0;
+    font-size: 0.9em;
+}
+
+.method-explanation ol {
+    margin: 10px 0 10px 20px;
+}
+
+.method-explanation li {
+    margin: 5px 0;
+    color: #555;
+}
+
+.step-details {
+    font-family: monospace;
+    white-space: pre-wrap;
+    margin: 5px 0;
+}
+
+.calculation-steps {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.error {
+    color: #666;
+    font-style: italic;
+    margin-top: 5px;
+}
+
+.iteration h4 {
+    margin: 10px 0 5px 0;
+    color: #555;
+}
+
+.matrix-operation {
+    font-family: 'Times New Roman', serif;
+    margin: 15px 0;
+    font-size: 1.1em;
+}
+
+.matrix-display {
+    display: inline-block;
+    margin: 10px 0;
+    border-left: 2px solid #333;
+    border-right: 2px solid #333;
+    padding: 5px 15px;
+}
+
+.matrix-row {
+    line-height: 1.5;
+}
+
+.matrix-equals {
+    margin: 0 10px;
+    font-weight: bold;
+}
+
+.matrix-multiply {
+    margin: 0 10px;
+}
+
+.iteration-step {
+    margin: 25px 0;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.matrix-calculation {
+    font-family: monospace;
+    white-space: pre;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 15px 0;
+}
+
+.next-vector {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+h3 {
+    margin-bottom: 10px;
+    color: #34495e;
+}
+
+.step-calculation {
+    font-family: monospace;
+    margin: 10px 0;
+    padding: 5px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    white-space: pre-wrap;
+}
+
+.values {
+    font-family: monospace;
+    font-size: 16px;
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+.final-result {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #e8f5e9;
+    border-radius: 5px;
+}
+
+.matrix-operation {
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+.next-vector {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.eigenvalue {
+    color: #2196F3;
+    font-weight: bold;
+}
+
+.eigenvector {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.step-number {
+    font-weight: bold;
+    color: #666;
+    margin-right: 10px;
+}
+
+.matrix-calculation {
+    font-family: monospace;
+    white-space: pre;
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.normalized-vector {
+    margin-top: 10px;
+    font-weight: bold;
 }

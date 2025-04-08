@@ -73,9 +73,67 @@ def gauss_seidel_method(A, b, tolerance=1e-6, max_iterations=1000):
     
     return {"iterations": iterations, "converged": False, "final": np.round(x, 5).tolist()}
 
+def power_method(A, tolerance=1e-6, max_iterations=1000):
+    n = len(A)
+    x_initial = np.array([1, 1, 1])  # Initial vector before normalization
+    
+    # Add initial multiplication AX₀
+    Ax0 = np.dot(A, x_initial)
+    x = x_initial / np.sqrt(np.sum(x_initial**2))  # Normalize to get x₁
+    
+    iterations = []
+    # Add AX₀ calculation
+    iterations.append({
+        "iteration": 0,
+        "matrix": A.tolist(),
+        "vector": x_initial.tolist(),
+        "result": np.round(Ax0, 5).tolist(),
+        "eigenvalue": float(np.round(np.max(np.abs(Ax0)), 5)),
+        "eigenvector": np.round(x, 5).tolist(),
+        "next_vector_label": f"X1 = [{', '.join([f'{v:.5f}' for v in x])}]"
+    })
+    
+    for iteration in range(max_iterations):
+        Ax = np.dot(A, x)
+        eigenvalue = np.max(np.abs(Ax))
+        x_new = Ax / eigenvalue
+        
+        iterations.append({
+            "iteration": iteration + 1,
+            "matrix": A.tolist(),
+            "vector": np.round(x, 5).tolist(),
+            "result": np.round(Ax, 5).tolist(),
+            "eigenvalue": float(np.round(eigenvalue, 5)),
+            "eigenvector": np.round(x_new, 5).tolist(),
+            "next_vector_label": f"X{iteration + 2} = [{', '.join([f'{v:.5f}' for v in x_new])}]"
+        })
+        
+        if np.allclose(x, x_new, rtol=tolerance):
+            break
+        x = x_new
+    
+    return {"iterations": iterations}
+
+# Add new route for power method
+@app.route('/power-method', methods=['POST'])
+def solve_power_method():
+    data = request.get_json()
+    A = np.array(data['matrix'])
+    result = power_method(A)
+    return jsonify(result)
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
+def is_diagonally_dominant(A):
+    n = len(A)
+    for i in range(n):
+        diagonal = abs(A[i][i])
+        row_sum = sum(abs(A[i][j]) for j in range(n) if j != i)
+        if diagonal <= row_sum:
+            return False
+    return True
 
 @app.route('/solve', methods=['POST'])
 def solve():
@@ -83,13 +141,19 @@ def solve():
     A = np.array(data['matrix'])
     b = np.array(data['vector'])
     
-    jacobi_result = jacobi_method(A, b)
-    gauss_result = gauss_seidel_method(A, b)
-    
-    return jsonify({
-        'jacobi': jacobi_result,
-        'gauss_seidel': gauss_result
-    })
+    try:
+        jacobi_result = jacobi_method(A, b)
+        gauss_result = gauss_seidel_method(A, b)
+        
+        return jsonify({
+            'jacobi': jacobi_result,
+            'gauss_seidel': gauss_result
+        })
+    except Exception as e:
+        return jsonify({
+            'error': 'An error occurred while solving the system.',
+            'details': str(e)
+        })
 
 # At the bottom of app.py
 if __name__ == '__main__':

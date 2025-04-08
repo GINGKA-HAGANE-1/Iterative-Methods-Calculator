@@ -13,239 +13,304 @@
         </div>
         <h1>Iterative Methods Calculator</h1>
         
-        <div class="input-section">
-            <h2>Input Matrix and Vector</h2>
-            <div class="matrix-input">
-                <h3>Matrix A (3x3)</h3>
-                <div class="matrix">
-                    <input type="number" step="any" class="matrix-cell" data-row="0" data-col="0">
-                    <input type="number" step="any" class="matrix-cell" data-row="0" data-col="1">
-                    <input type="number" step="any" class="matrix-cell" data-row="0" data-col="2">
-                    <input type="number" step="any" class="matrix-cell" data-row="1" data-col="0">
-                    <input type="number" step="any" class="matrix-cell" data-row="1" data-col="1">
-                    <input type="number" step="any" class="matrix-cell" data-row="1" data-col="2">
-                    <input type="number" step="any" class="matrix-cell" data-row="2" data-col="0">
-                    <input type="number" step="any" class="matrix-cell" data-row="2" data-col="1">
-                    <input type="number" step="any" class="matrix-cell" data-row="2" data-col="2">
-                </div>
-            </div>
-            
-            <div class="vector-input">
-                <h3>Vector b</h3>
-                <div class="vector">
-                    <input type="number" step="any" class="vector-cell">
-                    <input type="number" step="any" class="vector-cell">
-                    <input type="number" step="any" class="vector-cell">
-                </div>
-            </div>
-            
-            <button onclick="solve()">Solve</button>
+        <div class="method-tabs">
+            <button class="tab-button active" onclick="switchTab('jacobi')">Jacobi Method</button>
+            <button class="tab-button" onclick="switchTab('gauss-seidel')">Gauss-Seidel Method</button>
+            <button class="tab-button" onclick="switchTab('power-method')">Power Method</button>
         </div>
-        
-        <div class="results">
-            <div class="method-result" id="jacobi-result">
-                <h2>Jacobi Method</h2>
-                <div class="iterations"></div>
-            </div>
-            
-            <div class="method-result" id="gauss-seidel-result">
-                <h2>Gauss-Seidel Method</h2>
-                <div class="iterations"></div>
-            </div>
-        </div>
-    </div>
 
-    <script>
-        function solve() {
-            const matrix = [];
-            for (let i = 0; i < 3; i++) {
-                matrix[i] = [];
-                for (let j = 0; j < 3; j++) {
-                    matrix[i][j] = parseFloat(document.querySelector(`.matrix-cell[data-row="${i}"][data-col="${j}"]`).value);
+        <div id="jacobi" class="tab-content active">
+            <div class="input-section">
+                <h2>Jacobi Method Input</h2>
+                <div class="matrix-input">
+                    <h3>Matrix A (3x3)</h3>
+                    <div class="matrix">
+                        <input type="number" step="any" class="jacobi-matrix-cell" data-row="0" data-col="0">
+                        <input type="number" step="any" class="jacobi-matrix-cell" data-row="0" data-col="1">
+                        <input type="number" step="any" class="jacobi-matrix-cell" data-row="0" data-col="2">
+                        <input type="number" step="any" class="jacobi-matrix-cell" data-row="1" data-col="0">
+                        <input type="number" step="any" class="jacobi-matrix-cell" data-row="1" data-col="1">
+                        <input type="number" step="any" class="jacobi-matrix-cell" data-row="1" data-col="2">
+                        <input type="number" step="any" class="jacobi-matrix-cell" data-row="2" data-col="0">
+                        <input type="number" step="any" class="jacobi-matrix-cell" data-row="2" data-col="1">
+                        <input type="number" step="any" class="jacobi-matrix-cell" data-row="2" data-col="2">
+                    </div>
+                </div>
+                <!-- Keep only one vector b input with table style -->
+                <div class="vector-input">
+                    <h3>Vector b</h3>
+                    <table class="vector-table">
+                        <tr>
+                            <td>b₁</td>
+                            <td><input type="number" step="any" class="jacobi-vector-cell"></td>
+                        </tr>
+                        <tr>
+                            <td>b₂</td>
+                            <td><input type="number" step="any" class="jacobi-vector-cell"></td>
+                        </tr>
+                        <tr>
+                            <td>b₃</td>
+                            <td><input type="number" step="any" class="jacobi-vector-cell"></td>
+                        </tr>
+                    </table>
+                </div>
+                <button onclick="solveJacobi()">Solve using Jacobi</button>
+            </div>
+            <div class="method-result" id="jacobi-result">
+                <div class="iterations"></div>
+            </div>
+        </div>
+
+        <div id="gauss-seidel" class="tab-content">
+            <div class="input-section">
+                <h2>Gauss-Seidel Method Input</h2>
+                <div class="matrix-input">
+                    <h3>Matrix A (3x3)</h3>
+                    <div class="matrix">
+                        <input type="number" step="any" class="gauss-matrix-cell" data-row="0" data-col="0">
+                        <input type="number" step="any" class="gauss-matrix-cell" data-row="0" data-col="1">
+                        <input type="number" step="any" class="gauss-matrix-cell" data-row="0" data-col="2">
+                        <input type="number" step="any" class="gauss-matrix-cell" data-row="1" data-col="0">
+                        <input type="number" step="any" class="gauss-matrix-cell" data-row="1" data-col="1">
+                        <input type="number" step="any" class="gauss-matrix-cell" data-row="1" data-col="2">
+                        <input type="number" step="any" class="gauss-matrix-cell" data-row="2" data-col="0">
+                        <input type="number" step="any" class="gauss-matrix-cell" data-row="2" data-col="1">
+                        <input type="number" step="any" class="gauss-matrix-cell" data-row="2" data-col="2">
+                    </div>
+                </div>
+                <!-- Replace the Gauss-Seidel vector input section -->
+                <div class="vector-input">
+                    <h3>Vector b</h3>
+                    <table class="vector-table">
+                        <tr>
+                            <td>b₁</td>
+                            <td><input type="number" step="any" class="gauss-vector-cell"></td>
+                        </tr>
+                        <tr>
+                            <td>b₂</td>
+                            <td><input type="number" step="any" class="gauss-vector-cell"></td>
+                        </tr>
+                        <tr>
+                            <td>b₃</td>
+                            <td><input type="number" step="any" class="gauss-vector-cell"></td>
+                        </tr>
+                    </table>
+                </div>
+                <button onclick="solveGaussSeidel()">Solve using Gauss-Seidel</button>
+            </div>
+            <div class="method-result" id="gauss-seidel-result">
+                <div class="iterations"></div>
+            </div>
+        </div>
+
+        <!-- Remove duplicate script tags and combine all JavaScript into one section -->
+                <script>
+                    function switchTab(tabId) {
+                        // Hide all tabs
+                        document.querySelectorAll('.tab-content').forEach(tab => {
+                            tab.classList.remove('active');
+                        });
+                        document.querySelectorAll('.tab-button').forEach(button => {
+                            button.classList.remove('active');
+                        });
+                        
+                        // Show selected tab
+                        document.getElementById(tabId).classList.add('active');
+                        document.querySelector(`[onclick="switchTab('${tabId}')"]`).classList.add('active');
+                    }
+                    
+                    function solveJacobi() {
+                        const matrix = [];
+                        for (let i = 0; i < 3; i++) {
+                            matrix[i] = [];
+                            for (let j = 0; j < 3; j++) {
+                                matrix[i][j] = parseFloat(document.querySelector(`.jacobi-matrix-cell[data-row="${i}"][data-col="${j}"]`).value);
+                            }
+                        }
+                        
+                        const vector = Array.from(document.querySelectorAll('.jacobi-vector-cell')).map(input => parseFloat(input.value));
+                        
+                        fetch('/solve', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                matrix: matrix,
+                                vector: vector
+                            }),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            displayResults('jacobi', data.jacobi);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('An error occurred while solving the system.');
+                        });
+                    }
+                    
+                    function solveGaussSeidel() {
+                        const matrix = [];
+                        for (let i = 0; i < 3; i++) {
+                            matrix[i] = [];
+                            for (let j = 0; j < 3; j++) {
+                                matrix[i][j] = parseFloat(document.querySelector(`.gauss-matrix-cell[data-row="${i}"][data-col="${j}"]`).value);
+                            }
+                        }
+                        
+                        const vector = Array.from(document.querySelectorAll('.gauss-vector-cell')).map(input => parseFloat(input.value));
+                        
+                        fetch('/solve', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                matrix: matrix,
+                                vector: vector
+                            }),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            displayResults('gauss-seidel', data.gauss_seidel);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('An error occurred while solving the system.');
+                        });
+                    }
+                </script>
+
+        <div id="power-method" class="tab-content">
+            <div class="input-section">
+                <h2>Power Method Input</h2>
+                <div class="matrix-input">
+                    <h3>Matrix A (3x3)</h3>
+                    <div class="method-explanation">
+                        <p>Process:</p>
+                        <ol>
+                            <li>Initial vector x₀ = [1, 1, 1]</li>
+                            <li>Normalize x₀ by dividing by √3 to get x₀ = [0.577, 0.577, 0.577]</li>
+                            <li>Multiply: A × x₀</li>
+                            <li>Normalize result to get x₁</li>
+                            <li>Repeat until convergence</li>
+                        </ol>
+                    </div>
+                    <div class="matrix">
+                        <input type="number" step="any" class="power-matrix-cell" data-row="0" data-col="0">
+                        <input type="number" step="any" class="power-matrix-cell" data-row="0" data-col="1">
+                        <input type="number" step="any" class="power-matrix-cell" data-row="0" data-col="2">
+                        <input type="number" step="any" class="power-matrix-cell" data-row="1" data-col="0">
+                        <input type="number" step="any" class="power-matrix-cell" data-row="1" data-col="1">
+                        <input type="number" step="any" class="power-matrix-cell" data-row="1" data-col="2">
+                        <input type="number" step="any" class="power-matrix-cell" data-row="2" data-col="0">
+                        <input type="number" step="any" class="power-matrix-cell" data-row="2" data-col="1">
+                        <input type="number" step="any" class="power-matrix-cell" data-row="2" data-col="2">
+                    </div>
+                </div>
+                <button onclick="solvePowerMethod()">Find Eigenvalue</button>
+            </div>
+            <div class="method-result" id="power-method-result">
+                <div class="iterations"></div>
+            </div>
+        </div>
+
+        <script>
+            function solvePowerMethod() {
+                const matrix = [];
+                for (let i = 0; i < 3; i++) {
+                    matrix[i] = [];
+                    for (let j = 0; j < 3; j++) {
+                        matrix[i][j] = parseFloat(document.querySelector(`.power-matrix-cell[data-row="${i}"][data-col="${j}"]`).value);
+                    }
+                }
+                
+                fetch('/power-method', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        matrix: matrix
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    displayPowerResults(data);
+                });
+            }
+
+            function displayPowerResults(results) {
+                const container = document.querySelector('#power-method-result .iterations');
+                container.innerHTML = '';
+                
+                results.iterations.forEach(iteration => {
+                    const iterationDiv = document.createElement('div');
+                    iterationDiv.className = 'iteration-step';
+                    
+                    iterationDiv.innerHTML = `
+                        <h3>AX${iteration.iteration} =</h3>
+                        <div class="matrix-calculation">
+                            [${iteration.matrix[0].join(' ')}] × [${iteration.vector[0].toFixed(5)}]   [${iteration.result[0].toFixed(5)}]
+                            [${iteration.matrix[1].join(' ')}] × [${iteration.vector[1].toFixed(5)}] = [${iteration.result[1].toFixed(5)}] = ${iteration.eigenvalue.toFixed(5)} X${iteration.iteration + 1}
+                            [${iteration.matrix[2].join(' ')}] × [${iteration.vector[2].toFixed(5)}]   [${iteration.result[2].toFixed(5)}]
+                        </div>
+                        <div class="next-vector">
+                            ${iteration.next_vector_label}
+                        </div>
+                    `;
+                    
+                    container.appendChild(iterationDiv);
+                });
+            }
+        </script>
+
+        <script>
+            function displayResults(method, results) {
+                const container = document.querySelector(`#${method}-result .iterations`);
+                container.innerHTML = '';
+                
+                // Display initial guess X₀
+                const initialDiv = document.createElement('div');
+                initialDiv.className = 'iteration';
+                initialDiv.innerHTML = `
+                    <h3>Initial Guess (X₀)</h3>
+                    <div class="values">
+                        x = 0<br>
+                        y = 0<br>
+                        z = 0
+                    </div>
+                `;
+                container.appendChild(initialDiv);
+                
+                results.iterations.forEach(iteration => {
+                    if (iteration.steps && iteration.steps.length > 0) {
+                        const iterationDiv = document.createElement('div');
+                        iterationDiv.className = 'iteration-step';
+                        
+                        let stepsHtml = `<h4>Iteration ${iteration.iteration}</h4>`;
+                        iteration.steps.forEach(step => {
+                            stepsHtml += `<div class="step-calculation">${step}</div>`;
+                        });
+                        
+                        iterationDiv.innerHTML = stepsHtml;
+                        container.appendChild(iterationDiv);
+                    }
+                });
+                
+                if (results.converged) {
+                    const finalDiv = document.createElement('div');
+                    finalDiv.className = 'final-result';
+                    finalDiv.innerHTML = `
+                        <h4>Final Solution:</h4>
+                        <div class="values">
+                            x = ${results.final[0].toFixed(5)}<br>
+                            y = ${results.final[1].toFixed(5)}<br>
+                            z = ${results.final[2].toFixed(5)}
+                        </div>
+                    `;
+                    container.appendChild(finalDiv);
                 }
             }
-            
-            const vector = Array.from(document.querySelectorAll('.vector-cell')).map(input => parseFloat(input.value));
-            
-            fetch('/solve', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    matrix: matrix,
-                    vector: vector
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                displayResults('jacobi', data.jacobi);
-                displayResults('gauss-seidel', data.gauss_seidel);
-            });
-        }
-        
-        function displayResults(method, results) {
-            const container = document.querySelector(`#${method}-result .iterations`);
-            container.innerHTML = '';
-            
-            results.iterations.forEach(iteration => {
-                const iterationDiv = document.createElement('div');
-                iterationDiv.className = 'iteration';
-                
-                iterationDiv.innerHTML = `
-                    <h3>Iteration ${iteration.iteration}</h3>
-                    <div class="values">
-                        x = ${iteration.values[0]}<br>
-                        y = ${iteration.values[1]}<br>
-                        z = ${iteration.values[2]}
-                    </div>
-                    ${iteration.steps.map(step => `<div class="step">${step}</div>`).join('')}
-                `;
-                
-                container.appendChild(iterationDiv);
-            });
-            
-            const finalDiv = document.createElement('div');
-            finalDiv.className = 'final-result';
-            finalDiv.innerHTML = `
-                <h3>Final Result</h3>
-                <div class="values">
-                    x = ${results.final[0]}<br>
-                    y = ${results.final[1]}<br>
-                    z = ${results.final[2]}
-                </div>
-                <div class="convergence">
-                    ${results.converged ? 'Method converged' : 'Method did not converge'}
-                </div>
-            `;
-            container.appendChild(finalDiv);
-        }
-    </script>
-</body>
-=======
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Iterative Methods Calculator</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <!-- Add this right after <body> -->
-    <div class="container">
-        <div class="logo-section">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
-            <div class="author-name">Nadhanda sasi, sasi das</div>
-        </div>
-        <h1>Iterative Methods Calculator</h1>
-        
-        <div class="input-section">
-            <h2>Input Matrix and Vector</h2>
-            <div class="matrix-input">
-                <h3>Matrix A (3x3)</h3>
-                <div class="matrix">
-                    <input type="number" step="any" class="matrix-cell" data-row="0" data-col="0">
-                    <input type="number" step="any" class="matrix-cell" data-row="0" data-col="1">
-                    <input type="number" step="any" class="matrix-cell" data-row="0" data-col="2">
-                    <input type="number" step="any" class="matrix-cell" data-row="1" data-col="0">
-                    <input type="number" step="any" class="matrix-cell" data-row="1" data-col="1">
-                    <input type="number" step="any" class="matrix-cell" data-row="1" data-col="2">
-                    <input type="number" step="any" class="matrix-cell" data-row="2" data-col="0">
-                    <input type="number" step="any" class="matrix-cell" data-row="2" data-col="1">
-                    <input type="number" step="any" class="matrix-cell" data-row="2" data-col="2">
-                </div>
-            </div>
-            
-            <div class="vector-input">
-                <h3>Vector b</h3>
-                <div class="vector">
-                    <input type="number" step="any" class="vector-cell">
-                    <input type="number" step="any" class="vector-cell">
-                    <input type="number" step="any" class="vector-cell">
-                </div>
-            </div>
-            
-            <button onclick="solve()">Solve</button>
-        </div>
-        
-        <div class="results">
-            <div class="method-result" id="jacobi-result">
-                <h2>Jacobi Method</h2>
-                <div class="iterations"></div>
-            </div>
-            
-            <div class="method-result" id="gauss-seidel-result">
-                <h2>Gauss-Seidel Method</h2>
-                <div class="iterations"></div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function solve() {
-            const matrix = [];
-            for (let i = 0; i < 3; i++) {
-                matrix[i] = [];
-                for (let j = 0; j < 3; j++) {
-                    matrix[i][j] = parseFloat(document.querySelector(`.matrix-cell[data-row="${i}"][data-col="${j}"]`).value);
-                }
-            }
-            
-            const vector = Array.from(document.querySelectorAll('.vector-cell')).map(input => parseFloat(input.value));
-            
-            fetch('/solve', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    matrix: matrix,
-                    vector: vector
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                displayResults('jacobi', data.jacobi);
-                displayResults('gauss-seidel', data.gauss_seidel);
-            });
-        }
-        
-        function displayResults(method, results) {
-            const container = document.querySelector(`#${method}-result .iterations`);
-            container.innerHTML = '';
-            
-            results.iterations.forEach(iteration => {
-                const iterationDiv = document.createElement('div');
-                iterationDiv.className = 'iteration';
-                
-                iterationDiv.innerHTML = `
-                    <h3>Iteration ${iteration.iteration}</h3>
-                    <div class="values">
-                        x = ${iteration.values[0]}<br>
-                        y = ${iteration.values[1]}<br>
-                        z = ${iteration.values[2]}
-                    </div>
-                    ${iteration.steps.map(step => `<div class="step">${step}</div>`).join('')}
-                `;
-                
-                container.appendChild(iterationDiv);
-            });
-            
-            const finalDiv = document.createElement('div');
-            finalDiv.className = 'final-result';
-            finalDiv.innerHTML = `
-                <h3>Final Result</h3>
-                <div class="values">
-                    x = ${results.final[0]}<br>
-                    y = ${results.final[1]}<br>
-                    z = ${results.final[2]}
-                </div>
-                <div class="convergence">
-                    ${results.converged ? 'Method converged' : 'Method did not converge'}
-                </div>
-            `;
-            container.appendChild(finalDiv);
-        }
-    </script>
-</body>
->>>>>>> dee6f34da0bc354969922d34369af105c8b85b72
-</html>
+        </script>
