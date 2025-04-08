@@ -170,20 +170,26 @@ button:hover {
 
 .logo-section {
     text-align: center;
-    margin: 20px 0;
+    margin: 0;
+    padding: 20px 0;
+    background-color: #0a192f;
+    width: 100%;
 }
 
 .logo {
-    max-width: 200px;
+    width: 250px;
     height: auto;
     margin: 0 auto;
+    display: block;
+    filter: drop-shadow(0 0 3px rgba(100, 255, 218, 0.4));
 }
 
 .author-name {
     margin-top: 10px;
-    font-size: 1.2em;
-    color: #333;
+    font-size: 1em;
+    color: #64ffda;
     font-style: italic;
+    text-shadow: 0 0 12px rgba(100, 255, 218, 0.5);
 }
 
 .vector-table {
