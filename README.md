@@ -4,13 +4,16 @@
 >>>>>>> 6a36d47 (Update: Configure project for Vercel deployment)
 # Iterative Methods Calculator
 
-A web-based calculator for solving systems of linear equations using Jacobi and Gauss-Seidel iterative methods.
+A web-based calculator for solving systems of linear equations using Jacobi and Gauss-Seidel iterative methods, and finding dominant eigenvalues using the Power Method.
 
 ## 🚀 Features
 
 - Interactive web interface for matrix and vector input
 - Step-by-step solution visualization
-- Supports both Jacobi and Gauss-Seidel methods
+- Supports three numerical methods:
+  - Jacobi Method
+  - Gauss-Seidel Method
+  - Power Method for eigenvalue calculation
 - Displays detailed iteration steps
 - Shows convergence status
 - Real-time calculation
