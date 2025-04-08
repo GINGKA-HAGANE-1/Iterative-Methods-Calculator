@@ -5,12 +5,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <!-- Add this right after <body> -->
+    <div class="logo-section">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+        <div class="author-name">Made By Monish A.K.A Gingka Hagane</div>
+    </div>
     <div class="container">
-        <div class="logo-section">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
-            <div class="author-name">Nadhanda sasi, sasi das</div>
-        </div>
         <h1>Iterative Methods Calculator</h1>
         
         <div class="method-tabs">
