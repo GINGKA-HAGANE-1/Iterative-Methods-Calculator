@@ -207,23 +207,31 @@ def newton_forward_interpolation(x_values, y_values, x_target):
 
 def newton_backward_interpolation(x_values, y_values, x_target):
     n = len(x_values)
-    h = float(x_values[1] - x_values[0])  # Convert to float
+    h = float(x_values[1] - x_values[0])
     
     # Calculate the backward difference table
     F = [[0 for i in range(n)] for j in range(n)]
-    for i in range(n):
-        F[i][0] = float(y_values[i])  # Convert to float
     
+    # Fill first column with y values
+    for i in range(n):
+        F[i][0] = float(y_values[i])
+    
+    # Calculate backward differences correctly
     for j in range(1, n):
         for i in range(n-1, j-1, -1):
-            F[i][j] = float(F[i][j-1] - F[i-1][j-1])  # Convert to float
+            F[i][j] = float(F[i][j-1] - F[i-1][j-1])
     
-    # Calculate u = (x - xₙ)/h
-    u = float((x_target - x_values[n-1])/h)  # Convert to float
+    # Prepare the difference table for display
+    cleaned_table = []
+    cleaned_table.append([F[0][0], F[1][1], F[2][2], F[3][3]])  # First row
+    cleaned_table.append([F[1][0], F[2][1], F[3][2]])  # Second row
+    cleaned_table.append([F[2][0], F[3][1]])  # Third row
+    cleaned_table.append([F[3][0]])  # Fourth row
     
-    # Calculate the interpolated value
-    y_target = float(F[n-1][0])  # Convert to float
-    u_term = float(u)  # Convert to float
+    # Rest of the calculation remains the same
+    u = float((x_target - x_values[n-1])/h)
+    y_target = float(F[n-1][0])
+    u_term = float(u)
     fact = 1
     
     steps = []
@@ -231,27 +239,55 @@ def newton_backward_interpolation(x_values, y_values, x_target):
     steps.append(f"u = (x - xₙ)/h = ({x_target} - {float(x_values[n-1])})/{h} = {u}")
     
     for j in range(1, n):
-        term = float((u_term * F[n-1][j]) / fact)  # Convert to float
+        term = float((u_term * F[n-1][j]) / fact)
         steps.append(f"Term {j}: ({u_term} × {F[n-1][j]})/{fact} = {term}")
         y_target += term
         u_term *= (u + j)
         fact *= (j + 1)
     
-    # Convert all values in difference table to float
-    difference_table = []
-    for i in range(n):
-        row = []
-        for j in range(n):
-            row.append(float(F[i][j]))  # Convert to float
-        difference_table.append(row)
-    
     return {
-        "difference_table": difference_table,
+        "difference_table": cleaned_table,
         "steps": steps,
-        "result": float(y_target)  # Convert to float
+        "result": float(y_target)
     }
 
 # Add this route after your existing routes
+def lagrange_interpolation(x_values, y_values, x_target):
+    n = len(x_values)
+    y_target = 0
+    steps = []
+    
+    # Calculate each Lagrange term
+    for i in range(n):
+        # Calculate the basis polynomial L_i(x)
+        numerator = 1
+        denominator = 1
+        basis_step = f"L_{i}(x) = "
+        terms = []
+        
+        for j in range(n):
+            if i != j:
+                numerator *= (x_target - float(x_values[j]))
+                denominator *= (float(x_values[i]) - float(x_values[j]))
+                terms.append(f"(x - {float(x_values[j])})/(({float(x_values[i])} - {float(x_values[j])})")
+        
+        L_i = float(numerator/denominator)
+        term = float(L_i * y_values[i])
+        
+        basis_step += " × ".join(terms) + f" = {L_i}"
+        steps.append(basis_step)
+        steps.append(f"Term {i+1}: {L_i} × {float(y_values[i])} = {term}")
+        
+        y_target += term
+    
+    steps.append(f"Final sum = {float(y_target)}")
+    
+    return {
+        "steps": steps,
+        "result": float(y_target)
+    }
+
+# Modify the interpolate route to include Lagrange method
 @app.route('/interpolate', methods=['POST'])
 def interpolate():
     try:
@@ -263,8 +299,10 @@ def interpolate():
         
         if method == 'forward':
             result = newton_forward_interpolation(x_values, y_values, x_target)
-        else:
+        elif method == 'backward':
             result = newton_backward_interpolation(x_values, y_values, x_target)
+        else:
+            result = lagrange_interpolation(x_values, y_values, x_target)
         
         return jsonify(result)
     except Exception as e:
