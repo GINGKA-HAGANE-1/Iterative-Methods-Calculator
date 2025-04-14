@@ -39,6 +39,10 @@
                     <span class="method-icon">NB</span>
                     <span class="method-name">Newton Backward</span>
                 </button>
+                <button class="tab-button" onclick="switchTab('lagrange')">
+                    <span class="method-icon">L</span>
+                    <span class="method-name">Lagrange</span>
+                </button>
             </div>
         </div>
         <h1>Iterative Methods Calculator</h1>
@@ -538,7 +542,11 @@
                                             <li>Last row contains the values used in calculation</li>
                                         </ul>
                                     </div>
-                                    ${data.difference_table.map(row => row.map(val => val.toFixed(4)).join(' | ')).join('<br>')}
+                                    ${data.difference_table.map((row, index) => 
+                                        row.slice(0, data.difference_table.length - index)
+                                        .map(val => val.toFixed(4))
+                                        .join(' | '))
+                                    .join('<br>')}
                                 </div>
                             </div>`;
                         
@@ -577,6 +585,125 @@
                     updateForwardInputs();
                     if (document.getElementById('backward-points')) {
                         updateBackwardInputs();
+                    }
+                });
+            </script>
+
+            <div id="lagrange" class="tab-content">
+                <div class="input-section">
+                    <h2>Lagrange Interpolation</h2>
+                    <div class="interpolation-input">
+                        <div class="point-input">
+                            <label>Number of points:</label>
+                            <input type="number" id="lagrange-points" min="2" value="4" onchange="updateLagrangeInputs()">
+                        </div>
+                        <div id="lagrange-data-points"></div>
+                        <div class="point-input">
+                            <label>Find y for x = </label>
+                            <input type="number" step="any" id="lagrange-x-target">
+                        </div>
+                        <button onclick="solveLagrange()">Calculate</button>
+                    </div>
+                </div>
+                <div class="method-result" id="lagrange-result"></div>
+            </div>
+
+            <script>
+                function updateLagrangeInputs() {
+                    const n = parseInt(document.getElementById('lagrange-points').value);
+                    const container = document.getElementById('lagrange-data-points');
+                    container.innerHTML = '';
+                    
+                    for (let i = 0; i < n; i++) {
+                        container.innerHTML += `
+                            <div class="point-input">
+                                <label>Point ${i + 1}:</label>
+                                <input type="number" step="any" class="lagrange-x" placeholder="x${i+1}">
+                                <input type="number" step="any" class="lagrange-y" placeholder="y${i+1}">
+                            </div>
+                        `;
+                    }
+                }
+
+                function solveLagrange() {
+                    const x_values = Array.from(document.querySelectorAll('.lagrange-x')).map(input => parseFloat(input.value));
+                    const y_values = Array.from(document.querySelectorAll('.lagrange-y')).map(input => parseFloat(input.value));
+                    const x_target = parseFloat(document.getElementById('lagrange-x-target').value);
+
+                    // Add input validation
+                    if (x_values.some(isNaN) || y_values.some(isNaN) || isNaN(x_target)) {
+                        document.getElementById('lagrange-result').innerHTML = '<div class="error">Please fill in all values correctly</div>';
+                        return;
+                    }
+
+                    fetch('/interpolate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            x_values: x_values,
+                            y_values: y_values,
+                            x_target: x_target,
+                            method: 'lagrange'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            document.getElementById('lagrange-result').innerHTML = `<div class="error">${data.error}</div>`;
+                            return;
+                        }
+                        
+                        let html = '<div class="calculation-steps">';
+                        
+                        // Display explanation and formula
+                        html += `
+                            <div class="result-section">
+                                <h3 class="section-title">Lagrange Interpolation Method</h3>
+                                <div class="method-explanation">
+                                    <p>The Lagrange interpolation formula is:</p>
+                                    <p class="formula">P(x) = Σ yᵢLᵢ(x)</p>
+                                    <p>where Lᵢ(x) = Π (x - xⱼ)/(xᵢ - xⱼ), j ≠ i</p>
+                                    <ol>
+                                        <li>Calculate each Lagrange basis polynomial Lᵢ(x)</li>
+                                        <li>Multiply each Lᵢ(x) by its corresponding yᵢ value</li>
+                                        <li>Sum all terms to get the final interpolated value</li>
+                                    </ol>
+                                </div>
+                            </div>`;
+                        
+                        // Display calculation steps
+                        html += `
+                            <div class="result-section">
+                                <h3 class="section-title">Calculation Steps</h3>`;
+                        
+                        data.steps.forEach(step => {
+                            html += `<div class="calculation-step">${step}</div>`;
+                        });
+                        html += '</div>';
+                        
+                        // Display final result
+                        html += `
+                            <div class="result-section final">
+                                <h3 class="section-title">Final Result</h3>
+                                <div class="final-value">
+                                    <p>Interpolated value at x = ${x_target}:</p>
+                                    <p class="result">y(${x_target}) = ${data.result.toFixed(4)}</p>
+                                </div>
+                            </div>`;
+                        
+                        html += '</div>';
+                        document.getElementById('lagrange-result').innerHTML = html;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('lagrange-result').innerHTML = '<div class="error">An error occurred during calculation.</div>';
+                    });
+                }
+
+                // Initialize lagrange inputs when page loads
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (document.getElementById('lagrange-points')) {
+                        updateLagrangeInputs();
                     }
                 });
             </script>

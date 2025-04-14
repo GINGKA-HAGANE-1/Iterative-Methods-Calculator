@@ -749,26 +749,110 @@ h3 {
     font-family: 'Courier New', monospace;
 }
 
+/* Lagrange Interpolation Styling */
 .steps-explanation {
-    margin-bottom: 15px;
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-family: 'Computer Modern', Georgia, serif;
+}
+
+.formula {
+    font-family: 'Computer Modern Math', 'Times New Roman', serif;
+    font-size: 1.2em;
+    color: #2c3e50;
+    margin: 15px 0;
     padding: 10px;
-    background: #e8f5e9;
-    border-radius: 4px;
-    font-style: italic;
+    background: #e9ecef;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.method-steps {
+    margin: 15px 0;
+    padding: 15px;
+    border-left: 4px solid #007bff;
+    background: #f1f3f5;
+}
+
+.method-steps ol {
+    margin-left: 20px;
+    line-height: 1.6;
+}
+
+.calculation-step {
+    margin: 15px 0;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.step-formula {
+    font-family: 'Computer Modern Math', monospace;
+    font-size: 1.1em;
+    margin: 0;
+    white-space: pre-wrap;
+    color: #1a237e;
 }
 
 .final-value {
-    font-size: 1.8em;
-    color: #2c3e50;
     text-align: center;
+    margin: 20px 0;
     padding: 20px;
     background: #e8f5e9;
-    border-radius: 6px;
-    font-weight: bold;
-    margin-top: 10px;
+    border-radius: 8px;
 }
 
-.result-section.final {
-    background: #f1f8e9;
-    border: 2px solid #64ffda;
+.final-value .result {
+    font-size: 1.4em;
+    color: #1b5e20;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.explanation {
+    font-style: italic;
+    color: #555;
+    margin: 10px 0;
+}
+
+.interpolation-input {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 20px 0;
+}
+
+.point-input {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 10px 0;
+}
+
+.point-input label {
+    min-width: 100px;
+    color: #333;
+    font-weight: 500;
+}
+
+.point-input input {
+    width: 120px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+}
+
+#forward-data-points,
+#backward-data-points {
+    margin: 15px 0;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    background: #f8f9fa;
 }

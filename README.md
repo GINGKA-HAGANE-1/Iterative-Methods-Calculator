@@ -2,7 +2,7 @@
 
 # Iterative Methods Calculator
 
-A web-based calculator for solving systems of linear equations using Jacobi and Gauss-Seidel iterative methods, finding dominant eigenvalues using the Power Method, and performing Newton's interpolation.
+A web-based calculator for solving systems of linear equations using Jacobi and Gauss-Seidel iterative methods, finding dominant eigenvalues using the Power Method, and performing various interpolation methods.
 
 ## 🚀 Features
 
@@ -14,6 +14,7 @@ A web-based calculator for solving systems of linear equations using Jacobi and 
   - Power Method for eigenvalue calculation
   - Newton's Forward Interpolation
   - Newton's Backward Interpolation
+  - Lagrange Interpolation
 - Displays detailed iteration steps
 - Shows convergence status
 - Real-time calculation
@@ -32,6 +33,7 @@ A web-based calculator for solving systems of linear equations using Jacobi and 
 
 - Dynamic point input system
 - Forward and backward difference tables
+- Lagrange polynomial calculation
 - Step-by-step calculation display
 - Support for any number of points
 - Clear visualization of intermediate steps
