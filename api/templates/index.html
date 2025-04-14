@@ -6,20 +6,52 @@
 </head>
 <body>
     <div class="logo-section">
-        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
-        <div class="author-name">Made By Monish A.K.A Gingka Hagane</div>
+        <button class="menu-toggle" onclick="toggleSidebar()">
+            <span class="menu-line"></span>
+            <span class="menu-line"></span>
+            <span class="menu-line"></span>
+        </button>
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <div class="author-name">Made By Monish A.K.A Gingka Hagane</div>
+        </div>
     </div>
     <div class="container">
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <button class="tab-button active" onclick="switchTab('jacobi')">
+                    <span class="method-icon">J</span>
+                    <span class="method-name">Jacobi Method</span>
+                </button>
+                <button class="tab-button" onclick="switchTab('gauss-seidel')">
+                    <span class="method-icon">G</span>
+                    <span class="method-name">Gauss-Seidel Method</span>
+                </button>
+                <button class="tab-button" onclick="switchTab('power-method')">
+                    <span class="method-icon">P</span>
+                    <span class="method-name">Power Method</span>
+                </button>
+                <button class="tab-button" onclick="switchTab('newton-forward')">
+                    <span class="method-icon">NF</span>
+                    <span class="method-name">Newton Forward</span>
+                </button>
+                <button class="tab-button" onclick="switchTab('newton-backward')">
+                    <span class="method-icon">NB</span>
+                    <span class="method-name">Newton Backward</span>
+                </button>
+            </div>
+        </div>
         <h1>Iterative Methods Calculator</h1>
         
-        <div class="method-tabs">
-            <button class="tab-button active" onclick="switchTab('jacobi')">Jacobi Method</button>
-            <button class="tab-button" onclick="switchTab('gauss-seidel')">Gauss-Seidel Method</button>
-            <button class="tab-button" onclick="switchTab('power-method')">Power Method</button>
-        </div>
-
-        <div id="jacobi" class="tab-content active">
-            <div class="input-section">
+        <div class="content-wrapper">
+            <div class="method-tabs sidebar" id="sidebar">
+                <button class="tab-button active" onclick="switchTab('jacobi')">Jacobi Method</button>
+                <button class="tab-button" onclick="switchTab('gauss-seidel')">Gauss-Seidel Method</button>
+                <button class="tab-button" onclick="switchTab('power-method')">Power Method</button>
+            </div>
+            <div class="main-content">
+                <div id="jacobi" class="tab-content active">
+                    <div class="input-section">
                 <h2>Jacobi Method Input</h2>
                 <div class="matrix-input">
                     <h3>Matrix A (3x3)</h3>
@@ -313,3 +345,238 @@
                 }
             }
         </script>
+
+        <script>
+            function toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.querySelector('.main-content');
+                sidebar.classList.toggle('active');
+                mainContent.classList.toggle('shifted');
+            }
+        </script>
+    </body>
+</html>
+
+            <!-- Add this inside the main-content div, after your existing tab contents -->
+            
+            <div id="newton-forward" class="tab-content">
+                <div class="input-section">
+                    <h2>Newton's Forward Interpolation</h2>
+                    <div class="interpolation-input">
+                        <div class="point-input">
+                            <label>Number of points:</label>
+                            <input type="number" id="forward-points" min="2" value="4" onchange="updateForwardInputs()">
+                        </div>
+                        <div id="forward-data-points"></div>
+                        <div class="point-input">
+                            <label>Find y for x = </label>
+                            <input type="number" step="any" id="forward-x-target">
+                        </div>
+                        <button onclick="solveNewtonForward()">Calculate</button>
+                    </div>
+                </div>
+                <div class="method-result" id="forward-result"></div>
+            </div>
+            
+            <!-- Add this inside the main-content div -->
+            <div id="newton-backward" class="tab-content">
+                <div class="input-section">
+                    <h2>Newton's Backward Interpolation</h2>
+                    <div class="interpolation-input">
+                        <div class="point-input">
+                            <label>Number of points:</label>
+                            <input type="number" id="backward-points" min="2" value="4" onchange="updateBackwardInputs()">
+                        </div>
+                        <div id="backward-data-points"></div>
+                        <div class="point-input">
+                            <label>Find y for x = </label>
+                            <input type="number" step="any" id="backward-x-target">
+                        </div>
+                        <button onclick="solveNewtonBackward()">Calculate</button>
+                    </div>
+                </div>
+                <div class="method-result" id="backward-result"></div>
+            </div>
+            
+            <script>
+                function updateForwardInputs() {
+                    const n = parseInt(document.getElementById('forward-points').value);
+                    const container = document.getElementById('forward-data-points');
+                    container.innerHTML = '';
+                    
+                    for (let i = 0; i < n; i++) {
+                        container.innerHTML += `
+                            <div class="point-input">
+                                <label>Point ${i + 1}:</label>
+                                <input type="number" step="any" class="forward-x" placeholder="x${i+1}">
+                                <input type="number" step="any" class="forward-y" placeholder="y${i+1}">
+                            </div>
+                        `;
+                    }
+                }
+            
+                function solveNewtonForward() {
+                    const x_values = Array.from(document.querySelectorAll('.forward-x')).map(input => parseFloat(input.value));
+                    const y_values = Array.from(document.querySelectorAll('.forward-y')).map(input => parseFloat(input.value));
+                    const x_target = parseFloat(document.getElementById('forward-x-target').value);
+
+                    fetch('/interpolate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            x_values: x_values,
+                            y_values: y_values,
+                            x_target: x_target,
+                            method: 'forward'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            document.getElementById('forward-result').innerHTML = `<div class="error">${data.error}</div>`;
+                            return;
+                        }
+                        
+                        let html = '<div class="calculation-steps">';
+                        
+                        // Display difference table with header
+                        html += `
+                            <div class="result-section">
+                                <h3 class="section-title">Difference Table:</h3>
+                                <div class="difference-table">
+                                    <div class="table-explanation">
+                                        This table shows the forward differences used in the calculation:
+                                        <ul>
+                                            <li>First column: Original y values</li>
+                                            <li>Following columns: Forward differences of increasing order</li>
+                                        </ul>
+                                    </div>
+                                    ${data.difference_table.map(row => row.map(val => val.toFixed(4)).join(' | ')).join('<br>')}
+                                </div>
+                            </div>`;
+                        
+                        // Display calculation steps with detailed explanation
+                        html += `
+                            <div class="result-section">
+                                <h3 class="section-title">Detailed Calculation Steps:</h3>
+                                <div class="steps-explanation">
+                                    <p>Newton's Forward Formula: y(x) = y₀ + p∆y₀ + (p(p-1)/2!)∆²y₀ + ...</p>
+                                    <p>where p = (x - x₀)/h</p>
+                                </div>`;
+                        
+                        data.steps.forEach(step => {
+                            html += `<div class="calculation-step">${step}</div>`;
+                        });
+                        html += '</div>';
+                        
+                        // Display final result
+                        html += `
+                            <div class="result-section final">
+                                <h3 class="section-title">Final Result:</h3>
+                                <div class="final-value">y(${x_target}) = ${data.result.toFixed(4)}</div>
+                            </div>`;
+                        
+                        html += '</div>';
+                        document.getElementById('forward-result').innerHTML = html;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('forward-result').innerHTML = '<div class="error">An error occurred during calculation.</div>';
+                    });
+                }
+            
+                function updateBackwardInputs() {
+                    const n = parseInt(document.getElementById('backward-points').value);
+                    const container = document.getElementById('backward-data-points');
+                    container.innerHTML = '';
+                    
+                    for (let i = 0; i < n; i++) {
+                        container.innerHTML += `
+                            <div class="point-input">
+                                <label>Point ${i + 1}:</label>
+                                <input type="number" step="any" class="backward-x" placeholder="x${i+1}">
+                                <input type="number" step="any" class="backward-y" placeholder="y${i+1}">
+                            </div>
+                        `;
+                    }
+                }
+            
+                function solveNewtonBackward() {
+                    const x_values = Array.from(document.querySelectorAll('.backward-x')).map(input => parseFloat(input.value));
+                    const y_values = Array.from(document.querySelectorAll('.backward-y')).map(input => parseFloat(input.value));
+                    const x_target = parseFloat(document.getElementById('backward-x-target').value);
+
+                    fetch('/interpolate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            x_values: x_values,
+                            y_values: y_values,
+                            x_target: x_target,
+                            method: 'backward'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            document.getElementById('backward-result').innerHTML = `<div class="error">${data.error}</div>`;
+                            return;
+                        }
+                        
+                        let html = '<div class="calculation-steps">';
+                        
+                        // Display difference table with header
+                        html += `
+                            <div class="result-section">
+                                <h3 class="section-title">Difference Table:</h3>
+                                <div class="difference-table">
+                                    <div class="table-explanation">
+                                        This table shows the backward differences used in the calculation:
+                                        <ul>
+                                            <li>First column: Original y values</li>
+                                            <li>Following columns: Backward differences of increasing order</li>
+                                            <li>Last row contains the values used in calculation</li>
+                                        </ul>
+                                    </div>
+                                    ${data.difference_table.map(row => row.map(val => val.toFixed(4)).join(' | ')).join('<br>')}
+                                </div>
+                            </div>`;
+                        
+                        // Display calculation steps with detailed explanation
+                        html += `
+                            <div class="result-section">
+                                <h3 class="section-title">Detailed Calculation Steps:</h3>
+                                <div class="steps-explanation">
+                                    <p>Newton's Backward Formula: y(x) = yₙ + p∇yₙ + (p(p+1)/2!)∇²yₙ + ...</p>
+                                    <p>where p = (x - xₙ)/h and xₙ is the last point</p>
+                                </div>`;
+                        
+                        data.steps.forEach(step => {
+                            html += `<div class="calculation-step">${step}</div>`;
+                        });
+                        html += '</div>';
+                        
+                        // Display final result
+                        html += `
+                            <div class="result-section final">
+                                <h3 class="section-title">Final Result:</h3>
+                                <div class="final-value">y(${x_target}) = ${data.result.toFixed(4)}</div>
+                            </div>`;
+                        
+                        html += '</div>';
+                        document.getElementById('backward-result').innerHTML = html;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('backward-result').innerHTML = '<div class="error">An error occurred during calculation.</div>';
+                    });
+                }
+            
+                // Initialize both forward and backward inputs when page loads
+                document.addEventListener('DOMContentLoaded', function() {
+                    updateForwardInputs();
+                    if (document.getElementById('backward-points')) {
+                        updateBackwardInputs();
+                    }
+                });
+            </script>
