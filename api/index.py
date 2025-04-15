@@ -251,43 +251,59 @@ def newton_backward_interpolation(x_values, y_values, x_target):
         "result": float(y_target)
     }
 
-# Add this route after your existing routes
-def lagrange_interpolation(x_values, y_values, x_target):
+# Add after your other interpolation methods
+def newton_divided_difference(x_values, y_values, x_target):
     n = len(x_values)
-    y_target = 0
-    steps = []
+    F = [[0 for i in range(n)] for j in range(n)]
     
-    # Calculate each Lagrange term
+    # Fill first column with y values
     for i in range(n):
-        # Calculate the basis polynomial L_i(x)
-        numerator = 1
-        denominator = 1
-        basis_step = f"L_{i}(x) = "
-        terms = []
-        
-        for j in range(n):
-            if i != j:
-                numerator *= (x_target - float(x_values[j]))
-                denominator *= (float(x_values[i]) - float(x_values[j]))
-                terms.append(f"(x - {float(x_values[j])})/(({float(x_values[i])} - {float(x_values[j])})")
-        
-        L_i = float(numerator/denominator)
-        term = float(L_i * y_values[i])
-        
-        basis_step += " × ".join(terms) + f" = {L_i}"
-        steps.append(basis_step)
-        steps.append(f"Term {i+1}: {L_i} × {float(y_values[i])} = {term}")
-        
-        y_target += term
+        F[i][0] = float(y_values[i])
     
-    steps.append(f"Final sum = {float(y_target)}")
+    # Calculate divided differences
+    for j in range(1, n):
+        for i in range(n-j):
+            F[i][j] = float((F[i+1][j-1] - F[i][j-1]) / (x_values[i+j] - x_values[i]))
+    
+    # Prepare the divided difference table for display
+    cleaned_table = []
+    for i in range(n):
+        row = []
+        for j in range(n-i):
+            row.append(float(F[i][j]))
+        cleaned_table.append(row)
+    
+    # Calculate interpolation value with detailed steps
+    y_target = float(F[0][0])
+    term = 1.0
+    steps = []
+    steps.append(f"f(x) = {F[0][0]}")
+    
+    # Build the formula step by step
+    formula = f"f(x) = {F[0][0]}"
+    for j in range(1, n):
+        term *= (x_target - x_values[j-1])
+        contribution = term * F[0][j]
+        y_target += contribution
+        
+        # Add term to formula
+        factor_terms = [f"(x - {x_values[k]})" for k in range(j)]
+        formula_term = f" + ({' × '.join(factor_terms)}) × {F[0][j]}"
+        formula += formula_term
+        steps.append(f"Formula after term {j}: {formula}")
+        
+        # Show numerical calculation
+        steps.append(f"Term {j} calculation: ({' × '.join([f'({x_target} - {x_values[k]})' for k in range(j)])})"
+                    f" × {F[0][j]} = {contribution}")
+        steps.append(f"Sum after term {j}: {y_target}")
     
     return {
+        "difference_table": cleaned_table,
         "steps": steps,
         "result": float(y_target)
     }
 
-# Modify the interpolate route to include Lagrange method
+# Modify the interpolate route to include the divided difference method
 @app.route('/interpolate', methods=['POST'])
 def interpolate():
     try:
@@ -301,6 +317,8 @@ def interpolate():
             result = newton_forward_interpolation(x_values, y_values, x_target)
         elif method == 'backward':
             result = newton_backward_interpolation(x_values, y_values, x_target)
+        elif method == 'divided':
+            result = newton_divided_difference(x_values, y_values, x_target)
         else:
             result = lagrange_interpolation(x_values, y_values, x_target)
         

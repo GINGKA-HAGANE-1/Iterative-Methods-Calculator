@@ -39,6 +39,10 @@
                     <span class="method-icon">NB</span>
                     <span class="method-name">Newton Backward</span>
                 </button>
+                <button class="tab-button" onclick="switchTab('newton-divided')">
+                    <span class="method-icon">ND</span>
+                    <span class="method-name">Newton Divided</span>
+                </button>
                 <button class="tab-button" onclick="switchTab('lagrange')">
                     <span class="method-icon">L</span>
                     <span class="method-name">Lagrange</span>
@@ -674,20 +678,35 @@
                         // Display calculation steps
                         html += `
                             <div class="result-section">
-                                <h3 class="section-title">Calculation Steps</h3>`;
+                                <h3 class="section-title">Calculation Steps:</h3>
+                                <div class="steps-explanation">
+                                    <p>Newton's Divided Difference Formula:</p>
+                                    <p>f(x) = f(x₀) + f[x₀,x₁](x-x₀) + f[x₀,x₁,x₂](x-x₀)(x-x₁) + ...</p>
+                                </div>
+                                <div class="given-values">
+                                    <h4>Given Values:</h4>
+                                    <div class="values-grid">
+                                        ${x_values.map((x, i) => `x${i} = ${x}, f(x${i}) = ${y_values[i]}`).join('<br>')}
+                                    </div>
+                                </div>
+                                <div class="formula-development">
+                                    <h4>Formula Development:</h4>`;
                         
                         data.steps.forEach(step => {
-                            html += `<div class="calculation-step">${step}</div>`;
+                            html += `<div class="calculation-step">
+                                <div class="step-formula">${step}</div>
+                            </div>`;
                         });
-                        html += '</div>';
+                        
+                        html += `</div>`;
                         
                         // Display final result
                         html += `
                             <div class="result-section final">
-                                <h3 class="section-title">Final Result</h3>
+                                <h3 class="section-title">Final Result:</h3>
                                 <div class="final-value">
-                                    <p>Interpolated value at x = ${x_target}:</p>
-                                    <p class="result">y(${x_target}) = ${data.result.toFixed(4)}</p>
+                                    <p>At x = ${x_target}:</p>
+                                    <p class="result">y = ${data.result.toFixed(4)}</p>
                                 </div>
                             </div>`;
                         
@@ -707,3 +726,153 @@
                     }
                 });
             </script>
+
+            <!-- Add after the lagrange div and before the closing body tag -->
+            <div id="newton-divided" class="tab-content">
+                <div class="input-section">
+                    <h2>Newton's Divided Difference Interpolation</h2>
+                    <div class="interpolation-input">
+                        <div class="point-input">
+                            <label>Number of points:</label>
+                            <input type="number" id="divided-points" min="2" value="4" onchange="updateDividedInputs()">
+                        </div>
+                        <div id="divided-data-points"></div>
+                        <div class="point-input">
+                            <label>Find y for x = </label>
+                            <input type="number" step="any" id="divided-x-target">
+                        </div>
+                        <button onclick="solveNewtonDivided()">Calculate</button>
+                    </div>
+                </div>
+                <div class="method-result" id="divided-result"></div>
+            </div>
+
+            <script>
+                function updateDividedInputs() {
+                    const n = parseInt(document.getElementById('divided-points').value);
+                    const container = document.getElementById('divided-data-points');
+                    container.innerHTML = '';
+                    
+                    for (let i = 0; i < n; i++) {
+                        container.innerHTML += `
+                            <div class="point-input">
+                                <label>Point ${i + 1}:</label>
+                                <input type="number" step="any" class="divided-x" placeholder="x${i+1}">
+                                <input type="number" step="any" class="divided-y" placeholder="y${i+1}">
+                            </div>
+                        `;
+                    }
+                }
+
+                function solveNewtonDivided() {
+                    const x_values = Array.from(document.querySelectorAll('.divided-x')).map(input => parseFloat(input.value));
+                    const y_values = Array.from(document.querySelectorAll('.divided-y')).map(input => parseFloat(input.value));
+                    const x_target = parseFloat(document.getElementById('divided-x-target').value);
+
+                    if (x_values.some(isNaN) || y_values.some(isNaN) || isNaN(x_target)) {
+                        document.getElementById('divided-result').innerHTML = '<div class="error">Please fill in all values correctly</div>';
+                        return;
+                    }
+
+                    fetch('/interpolate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            x_values: x_values,
+                            y_values: y_values,
+                            x_target: x_target,
+                            method: 'divided'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            document.getElementById('divided-result').innerHTML = `<div class="error">${data.error}</div>`;
+                            return;
+                        }
+                        
+                        let html = '<div class="calculation-steps">';
+                        
+                        // Display divided difference table
+                        html += `
+                            <div class="result-section">
+                                <h3 class="section-title">Divided Difference Table:</h3>
+                                <div class="difference-table">
+                                    <div class="table-explanation">
+                                        <p>This table shows the divided differences:</p>
+                                        <ul>
+                                            <li>First column: Original y values</li>
+                                            <li>Following columns: Divided differences of increasing order</li>
+                                            <li>Each value is calculated as: f[x₁,x₂] = (f[x₂]-f[x₁])/(x₂-x₁)</li>
+                                        </ul>
+                                    </div>
+                                    ${data.difference_table.map(row => row.map(val => val.toFixed(4)).join(' | ')).join('<br>')}
+                                </div>
+                            </div>`;
+                        
+                        // Display calculation steps
+                        html += `
+                            <div class="result-section">
+                                <h3 class="section-title">Calculation Steps:</h3>
+                                <div class="steps-explanation">
+                                    <p>Newton's Divided Difference Formula:</p>
+                                    <p>f(x) = f(x₀) + f[x₀,x₁](x-x₀) + f[x₀,x₁,x₂](x-x₀)(x-x₁) + ...</p>
+                                </div>`;
+                        
+                        data.steps.forEach(step => {
+                            html += `<div class="calculation-step">${step}</div>`;
+                        });
+                        
+                        // Display final result
+                        html += `
+                            <div class="result-section final">
+                                <h3 class="section-title">Final Result:</h3>
+                                <div class="final-value">y(${x_target}) = ${data.result.toFixed(4)}</div>
+                            </div>`;
+                        
+                        html += '</div>';
+                        document.getElementById('divided-result').innerHTML = html;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('divided-result').innerHTML = '<div class="error">An error occurred during calculation.</div>';
+                    });
+                }
+
+                // Initialize divided inputs when page loads
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (document.getElementById('divided-points')) {
+                        updateDividedInputs();
+                    }
+                });
+            </script>
+
+            <style>
+                /* Add these styles in your existing style section */
+                .values-grid {
+                    margin: 10px 0;
+                    padding: 10px;
+                    background: #f5f5f5;
+                    border-radius: 5px;
+                }
+                
+                .formula-development {
+                    margin-top: 15px;
+                }
+                
+                .step-formula {
+                    font-family: 'Computer Modern', serif;
+                    font-size: 1.1em;
+                    margin: 10px 0;
+                    padding: 8px;
+                    background: #fff;
+                    border-left: 3px solid #2196F3;
+                }
+                
+                .given-values {
+                    margin: 15px 0;
+                    padding: 10px;
+                    border: 1px solid #e0e0e0;
+                    border-radius: 5px;
+                }
+            </style>
