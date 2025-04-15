@@ -303,6 +303,49 @@ def newton_divided_difference(x_values, y_values, x_target):
         "result": float(y_target)
     }
 
+# Add before the interpolate route
+def lagrange_interpolation(x_values, y_values, x_target):
+    n = len(x_values)
+    y_target = 0
+    steps = []
+    
+    # Calculate each Lagrange term
+    for i in range(n):
+        # Calculate the Lagrange basis polynomial
+        numerator = []
+        denominator = []
+        
+        for j in range(n):
+            if i != j:
+                numerator.append(f"(x - {x_values[j]})")
+                denominator.append(f"({x_values[i]} - {x_values[j]})")
+        
+        # Calculate the numerical values
+        term = y_values[i]
+        for j in range(n):
+            if i != j:
+                term *= (x_target - x_values[j]) / (x_values[i] - x_values[j])
+        
+        # Format the step for display
+        step = f"L{i}(x) = {y_values[i]} × "
+        step += f"({' × '.join(numerator)}) / ({' × '.join(denominator)})"
+        steps.append(step)
+        
+        # Show numerical calculation
+        num_calc = f"L{i}({x_target}) = {y_values[i]} × "
+        num_terms = [f"({x_target} - {x_values[j]})/({x_values[i]} - {x_values[j]})" 
+                    for j in range(n) if i != j]
+        num_calc += f"{' × '.join(num_terms)} = {term:.4f}"
+        steps.append(num_calc)
+        
+        y_target += term
+        steps.append(f"Sum after term {i+1}: {y_target:.4f}")
+    
+    return {
+        "steps": steps,
+        "result": float(y_target)
+    }
+
 # Modify the interpolate route to include the divided difference method
 @app.route('/interpolate', methods=['POST'])
 def interpolate():
