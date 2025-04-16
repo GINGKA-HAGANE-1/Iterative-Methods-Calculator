@@ -907,14 +907,24 @@
             </style>
 
             <!-- Add before the closing body tag -->
+            <!-- Add the numerical integration section -->
             <div id="numerical-integration" class="tab-content">
                 <div class="input-section">
                     <h2>Numerical Integration</h2>
                     <div class="integration-input">
                         <div class="function-input">
                             <label>Function f(x):</label>
-                            <input type="text" id="integration-function" placeholder="e.g., x**2 + 2*x + 1">
-                            <p class="input-help">Use Python syntax: x**2 for x², np.sin(x) for sin(x)</p>
+                            <input type="text" id="integration-function" placeholder="e.g., x^2, sin(x), e^x">
+                            <div class="function-help">
+                                <p>Supported functions:</p>
+                                <ul>
+                                    <li>Basic: +, -, *, /, ^</li>
+                                    <li>Trigonometric: sin(x), cos(x), tan(x)</li>
+                                    <li>Inverse trig: arcsin(x), arccos(x), arctan(x)</li>
+                                    <li>Exponential: e^x, e</li>
+                                    <li>Logarithmic: ln(x), log(x)</li>
+                                </ul>
+                            </div>
                         </div>
                         <div class="limits-input">
                             <label>Lower limit (a):</label>
@@ -922,16 +932,15 @@
                             <label>Upper limit (b):</label>
                             <input type="number" step="any" id="upper-limit">
                         </div>
-                        <div class="intervals-input">
-                            <label>Number of intervals:</label>
-                            <input type="number" min="2" value="4" id="intervals">
-                        </div>
+
                         <div class="method-selection">
                             <label>Method:</label>
                             <select id="integration-method">
                                 <option value="trapezoidal">Trapezoidal Rule</option>
-                                <option value="simpson">Simpson's 1/3 Rule</option>
+                                <option value="simpson">Simpson's Rule</option>
                             </select>
+                            <label>Number of intervals:</label>
+                            <input type="number" id="intervals" min="2" value="4">
                         </div>
                         <button onclick="solveIntegration()">Calculate</button>
                     </div>
@@ -973,29 +982,35 @@
                         }
 
                         let html = '<div class="calculation-steps">';
-                        
-                        // Display method explanation
+
                         html += `
                             <div class="result-section">
-                                <h3 class="section-title">${method === 'trapezoidal' ? 'Trapezoidal Rule' : "Simpson's 1/3 Rule"}</h3>
+                                <h3 class="section-title">${method === 'trapezoidal' ? 'Trapezoidal Rule' : "Simpson's Rule"}</h3>
                                 <div class="method-explanation">
-                                    <p>Integration of f(x) from ${a} to ${b}</p>
-                                    <p>Number of intervals: ${n}</p>
-                                    <p>Function: f(x) = ${func}</p>
+                                    <p>Integrating f(x) = ${func}</p>
+                                    <p>from ${a} to ${b} using ${n} intervals</p>
                                 </div>
                             </div>`;
+                        
+                        // Display calculation steps
                         html += `
                             <div class="result-section">
-                                <h3 class="section-title">Detailed Calculation Steps:</h3>
-                            </div>`;                        
+                                <h3 class="section-title">Calculation Steps:</h3>
+                            </div>`;
+                        
                         data.steps.forEach(step => {
                             html += `<div class="calculation-step">${step}</div>`;
                         });
+                        
+                        // Display final result
                         html += `
                             <div class="result-section final">
                                 <h3 class="section-title">Final Result:</h3>
-                                <div class="final-value">∫f(x)dx = ${data.result.toFixed(6)}</div>
-                            </div>`;                       
+                                <div class="final-value">
+                                    <p>∫[${a} to ${b}] ${func} dx = ${data.result.toFixed(6)}</p>
+                                </div>
+                            </div>`;
+                        
                         html += '</div>';
                         document.getElementById('integration-result').innerHTML = html;
                     })
