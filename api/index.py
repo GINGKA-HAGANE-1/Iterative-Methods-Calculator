@@ -473,35 +473,27 @@ def integrate():
         b = float(data['upper_limit'])
         n = int(data['intervals'])
         method = data['method']
-        
-        # Convert function string to callable with support for all common mathematical functions
+              
         def f(x):
-            # Replace common mathematical expressions
-            func_str = data['function']
-            
-            # Exponential and logarithmic
-            func_str = func_str.replace('e^', 'np.exp')
-            func_str = func_str.replace('ln', 'np.log')
-            func_str = func_str.replace('log', 'np.log10')
+            func_str = data['function']  
+            # Add pi handling
+            func_str = func_str.replace('pi', str(np.pi))
+            func_str = func_str.replace('log(', 'log10(')  # Base-10 log first
+            func_str = func_str.replace('ln(', 'log(')    # Natural log after
+            func_str = func_str.replace('e^', 'exp')      # Exponential
             func_str = func_str.replace('e', str(np.e))
             
-            # Trigonometric functions
+            # Update trig functions
             trig_funcs = {
-                'sin': 'np.sin',
-                'cos': 'np.cos',
-                'tan': 'np.tan',
-                'csc': '1/np.sin',
-                'sec': '1/np.cos',
-                'cot': '1/np.tan',
-                'arcsin': 'np.arcsin',
-                'arccos': 'np.arccos',
-                'arctan': 'np.arctan',
-                'asin': 'np.arcsin',    # Alternative notation
-                'acos': 'np.arccos',    # Alternative notation
-                'atan': 'np.arctan',    # Alternative notation
-                'sinh': 'np.sinh',
-                'cosh': 'np.cosh',
-                'tanh': 'np.tanh'
+                'sin': 'sin',
+                'cos': 'cos',
+                'tan': 'tan',
+                'arcsin': 'arcsin',
+                'arccos': 'arccos',
+                'arctan': 'arctan',
+                'sinh': 'sinh',
+                'cosh': 'cosh',
+                'tanh': 'tanh'
             }
             
             for old, new in trig_funcs.items():
@@ -509,7 +501,11 @@ def integrate():
             
             # Replace 'x' with the actual value
             return eval(func_str.replace('x', 'x_val'), 
-                      {'x_val': x, 'np': np, 'math': math})
+                      {'x_val': x, 'np': np, 'math': math, 
+                       'sin': np.sin, 'cos': np.cos, 'tan': np.tan,
+                       'exp': np.exp, 'log': np.log, 'log10': np.log10,
+                       'arcsin': np.arcsin, 'arccos': np.arccos, 'arctan': np.arctan,
+                       'sinh': np.sinh, 'cosh': np.cosh, 'tanh': np.tanh})
         
         if method == 'trapezoidal':
             result = trapezoidal_rule(f, a, b, n)
