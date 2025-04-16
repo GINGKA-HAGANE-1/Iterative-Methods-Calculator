@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import numpy as np
-
+import math
 app = Flask(__name__)
 
 def jacobi_method(A, b, tolerance=1e-6, max_iterations=1000):
@@ -371,6 +371,126 @@ def interpolate():
             'error': str(e)
         }), 400
 
-# At the bottom of app.py
+# Add after the interpolation methods
+def trapezoidal_rule(f, a, b, n):
+    h = (b - a) / n
+    x = np.linspace(a, b, n+1)
+    y = f(x)
+    
+    steps = []
+    steps.append(f"h = (b - a)/n = ({b} - {a})/{n} = {h}")
+    steps.append(f"Dividing interval [{a}, {b}] into {n} equal parts")
+    
+    # Show x values and corresponding y values
+    steps.append("\nPoints calculation:")
+    for i in range(n+1):
+        steps.append(f"x{i} = {x[i]:.4f}, f(x{i}) = {y[i]:.4f}")
+    
+    # Show trapezoidal areas
+    steps.append("\nCalculating areas of individual trapezoids:")
+    individual_areas = []
+    for i in range(n):
+        area = (h/2) * (y[i] + y[i+1])
+        individual_areas.append(area)
+        steps.append(f"Trapezoid {i+1}: (h/2)(f(x{i}) + f(x{i+1})) = ({h}/2)({y[i]:.4f} + {y[i+1]:.4f}) = {area:.4f}")
+    
+    # Calculate final result
+    result = sum(individual_areas)
+    
+    # Show formula expansion
+    steps.append("\nTrapezoidal Rule Formula:")
+    steps.append(f"∫f(x)dx ≈ (h/2)[f(x₀) + 2(f(x₁) + ... + f(xₙ₋₁)) + f(xₙ)]")
+    
+    # Show detailed calculation
+    middle_terms = ' + '.join([f"{y[i]:.4f}" for i in range(1, n)])
+    steps.append(f"\nDetailed Calculation:")
+    steps.append(f"= ({h}/2)[{y[0]:.4f} + 2({middle_terms}) + {y[-1]:.4f}]")
+    steps.append(f"= {result:.6f}")
+    
+    return {
+        "steps": steps,
+        "result": float(result)
+    }
+
+def simpsons_rule(f, a, b, n):
+    if n % 2 != 0:
+        n += 1  # Ensure n is even
+    
+    h = (b - a) / n
+    x = np.linspace(a, b, n+1)
+    y = f(x)
+    
+    steps = []
+    steps.append(f"h = (b - a)/n = ({b} - {a})/{n} = {h}")
+    steps.append(f"Dividing interval [{a}, {b}] into {n} equal parts")
+    
+    # Show all points and function values
+    steps.append("\nPoints calculation:")
+    for i in range(n+1):
+        steps.append(f"x{i} = {x[i]:.4f}, f(x{i}) = {y[i]:.4f}")
+    
+    # Group terms
+    first = y[0]
+    last = y[-1]
+    odd_terms = y[1:-1:2]
+    even_terms = y[2:-1:2]
+    
+    # Show grouping of terms
+    steps.append("\nGrouping terms:")
+    steps.append(f"First term (f₀): {first:.4f}")
+    steps.append(f"Last term (fₙ): {last:.4f}")
+    steps.append(f"Odd-indexed terms (4×): {', '.join([f'{v:.4f}' for v in odd_terms])}")
+    steps.append(f"Even-indexed terms (2×): {', '.join([f'{v:.4f}' for v in even_terms])}")
+    
+    # Calculate components
+    odd_sum = 4 * sum(odd_terms)
+    even_sum = 2 * sum(even_terms)
+    
+    # Show Simpson's 1/3 rule calculation
+    steps.append("\nSimpson's 1/3 Rule Formula:")
+    steps.append(f"∫f(x)dx ≈ (h/3)[f₀ + 4(f₁ + f₃ + ...) + 2(f₂ + f₄ + ...) + fₙ]")
+    
+    # Show detailed calculation
+    steps.append(f"\nDetailed Calculation:")
+    steps.append(f"= (h/3)[{first:.4f} + 4({' + '.join([f'{v:.4f}' for v in odd_terms])}) + "
+                f"2({' + '.join([f'{v:.4f}' for v in even_terms])}) + {last:.4f}]")
+    steps.append(f"= ({h}/3)[{first:.4f} + {odd_sum:.4f} + {even_sum:.4f} + {last:.4f}]")
+    
+    result = (h/3) * (first + odd_sum + even_sum + last)
+    steps.append(f"= {result:.6f}")
+    
+    return {
+        "steps": steps,
+        "result": float(result)
+    }
+
+# Add new route for numerical integration
+@app.route('/integrate', methods=['POST'])
+def integrate():
+    try:
+        data = request.get_json()
+        a = float(data['lower_limit'])
+        b = float(data['upper_limit'])
+        n = int(data['intervals'])
+        method = data['method']
+        
+        # Convert function string to callable
+        def f(x):
+            # Replace 'x' in the function string with the actual value
+            # This is a simple implementation - you might want to use a proper parser
+            return eval(data['function'].replace('x', 'x_val'), 
+                       {'x_val': x, 'np': np, 'math': math})
+        
+        if method == 'trapezoidal':
+            result = trapezoidal_rule(f, a, b, n)
+        else:
+            result = simpsons_rule(f, a, b, n)
+        
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({
+            'error': str(e)
+        }), 400
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
