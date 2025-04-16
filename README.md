@@ -2,7 +2,7 @@
 
 # Iterative Methods Calculator
 
-A web-based calculator for solving systems of linear equations using various numerical methods, including iterative methods and interpolation techniques.
+A web-based calculator for solving systems of linear equations using various numerical methods, including iterative methods, interpolation techniques, and numerical integration.
 
 ## 🚀 Features
 
@@ -16,34 +16,46 @@ A web-based calculator for solving systems of linear equations using various num
   - Newton's Backward Interpolation
   - Newton's Divided Difference Interpolation
   - Lagrange Interpolation
+  - Numerical Integration Methods:
+    - Trapezoidal Rule
+    - Simpson's Rule
 - Displays detailed iteration steps
 - Shows convergence status
 - Real-time calculation
 - Difference table visualization for interpolation
 - Detailed step-by-step calculations
 
-## 🛠️ Technologies Used
+## 📊 Numerical Methods Features
 
-- Python
-- Flask
-- HTML/CSS
-- JavaScript
-- NumPy
+### Linear Systems
+- Interactive matrix and vector input
+- Convergence checking
+- Detailed iteration steps
+- Solution visualization
 
-## 📊 Interpolation Features
-
+### Interpolation
 - Dynamic point input system
 - Forward, backward, and divided difference tables
 - Lagrange polynomial calculation
 - Step-by-step calculation display
-- Support for any number of points
-- Clear visualization of intermediate steps
 - Formula development display
-- Detailed explanation of each step
 
-## 🌐 Live Demo
+### Numerical Integration
+- Support for various mathematical functions:
+  - Trigonometric (sin, cos, tan)
+  - Inverse trigonometric (arcsin, arccos, arctan)
+  - Exponential and logarithmic (e^x, ln, log)
+  - Hyperbolic functions (sinh, cosh, tanh)
+- Adjustable number of intervals
+- Detailed step-by-step integration process
+- Visual representation of calculations
 
-Visit the calculator at: [Iterative Methods Calculator](https://iterative-methods-calculator.vercel.app/)
+## 🛠️ Technologies Used
+
+- Python (Flask, NumPy)
+- HTML/CSS
+- JavaScript
+- Mathematical Libraries
 
 ## 💻 Local Installation
 
