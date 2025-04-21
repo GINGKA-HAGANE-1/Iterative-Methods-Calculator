@@ -615,6 +615,7 @@ h3 {
     color: #64ffda;
     text-align: left;
     transition: background-color 0.3s ease;
+    margin-left: 10px; /* Add this line to move the button to the right */
 }
 
 .tab-button:hover {
