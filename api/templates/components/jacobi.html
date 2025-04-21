@@ -1,0 +1,40 @@
+<div id="jacobi" class="tab-content active">
+    <div class="input-section">
+        <h2>Jacobi Method Input</h2>
+        <div class="matrix-input">
+            <h3>Matrix A (3x3)</h3>
+            <div class="matrix">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="jacobi-matrix-cell" data-row="0" data-col="0">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="jacobi-matrix-cell" data-row="0" data-col="1">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="jacobi-matrix-cell" data-row="0" data-col="2">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="jacobi-matrix-cell" data-row="1" data-col="0">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="jacobi-matrix-cell" data-row="1" data-col="1">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="jacobi-matrix-cell" data-row="1" data-col="2">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="jacobi-matrix-cell" data-row="2" data-col="0">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="jacobi-matrix-cell" data-row="2" data-col="1">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="jacobi-matrix-cell" data-row="2" data-col="2">
+            </div>
+        </div>
+        <div class="vector-input">
+            <h3>Vector b</h3>
+            <table class="vector-table">
+                <tr>
+                    <td>b₁</td>
+                    <td><input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="jacobi-vector-cell"></td>
+                </tr>
+                <tr>
+                    <td>b₂</td>
+                    <td><input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="jacobi-vector-cell"></td>
+                </tr>
+                <tr>
+                    <td>b₃</td>
+                    <td><input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="jacobi-vector-cell"></td>
+                </tr>
+            </table>
+        </div>
+        <button onclick="solveJacobi()">Solve using Jacobi</button>
+    </div>
+    <div class="method-result" id="jacobi-result">
+        <div class="iterations"></div>
+    </div>
+</div>

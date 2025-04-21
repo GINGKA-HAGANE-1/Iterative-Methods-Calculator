@@ -1,0 +1,62 @@
+<div id="numerical-differentiation" class="tab-content" style="display: none;">
+    <h2>Numerical Differentiation</h2>
+    
+    <div class="input-section">
+        <div class="method-selection">
+            <label>Differentiation Method:</label>
+            <select id="diff-method" class="form-control">
+                <option value="forward">Newton Forward Differentiation</option>
+                <option value="backward">Newton Backward Differentiation</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Number of Points:</label>
+            <input type="text" inputmode="decimal" pattern="[0-9]*" min="3" value="3" id="diff-points" class="form-control" onchange="updateDiffPoints()">
+        </div>
+
+        <div class="point-pairs">
+            <div class="point-pair">
+                <div class="point-input">
+                    <label>x0:</label>
+                    <input type="text" class="diff-x form-control" data-index="0">
+                </div>
+                <div class="point-input">
+                    <label>y0:</label>
+                    <input type="text" class="diff-y form-control" data-index="0">
+                </div>
+            </div>
+            <div class="point-pair">
+                <div class="point-input">
+                    <label>x1:</label>
+                    <input type="text" class="diff-x form-control" data-index="1">
+                </div>
+                <div class="point-input">
+                    <label>y1:</label>
+                    <input type="text" class="diff-y form-control" data-index="1">
+                </div>
+            </div>
+            <div class="point-pair">
+                <div class="point-input">
+                    <label>x2:</label>
+                    <input type="text" class="diff-x form-control" data-index="2">
+                </div>
+                <div class="point-input">
+                    <label>y2:</label>
+                    <input type="text" class="diff-y form-control" data-index="2">
+                </div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Point of Differentiation (x):</label>
+            <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" id="diff-x-value" class="form-control">
+        </div>
+
+        <button onclick="calculateDifferentiation()" class="calculate-btn">Calculate</button>
+    </div>
+
+    <div id="diff-result" class="result-section">
+        <!-- Results will be displayed here -->
+    </div>
+</div>

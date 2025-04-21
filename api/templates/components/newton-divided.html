@@ -1,0 +1,28 @@
+<div id="newton-divided" class="tab-content">
+    <div class="input-section">
+        <h2>Newton Divided Differences</h2>
+        <div class="data-input">
+            <div class="input-group">
+                <label>Number of Points:</label>
+                <input type="text" inputmode="decimal" pattern="[0-9]*" min="2" value="3" id="nd-points" class="form-control">
+            </div>
+            <div class="points-container" id="nd-points-container">
+                <!-- Points will be dynamically added here -->
+            </div>
+            <div class="input-group">
+                <label>Interpolation Point (x):</label>
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" id="nd-x-value" class="form-control">
+            </div>
+        </div>
+        <button onclick="calculateNewtonDivided()" class="calculate-btn">Calculate</button>
+    </div>
+    <div class="result-section">
+        <h3>Results</h3>
+        <div id="nd-result" class="result-display">
+            <!-- Results will be displayed here -->
+        </div>
+        <div id="nd-table" class="divided-diff-table">
+            <!-- Divided differences table will be shown here -->
+        </div>
+    </div>
+</div>

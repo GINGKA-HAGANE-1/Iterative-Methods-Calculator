@@ -1,0 +1,33 @@
+<div id="power-method" class="tab-content">
+    <div class="input-section">
+        <h2>Power Method Input</h2>
+        <div class="matrix-input">
+            <h3>Matrix A (3x3)</h3>
+            <div class="method-explanation">
+                <p>Process:</p>
+                <ol>
+                    <li>Initial vector x₀ = [1, 1, 1]</li>
+                    <li>Normalize x₀ by dividing by √3 to get x₀ = [0.577, 0.577, 0.577]</li>
+                    <li>Multiply: A × x₀</li>
+                    <li>Normalize result to get x₁</li>
+                    <li>Repeat until convergence</li>
+                </ol>
+            </div>
+            <div class="matrix">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="power-matrix-cell" data-row="0" data-col="0">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="power-matrix-cell" data-row="0" data-col="1">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="power-matrix-cell" data-row="0" data-col="2">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="power-matrix-cell" data-row="1" data-col="0">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="power-matrix-cell" data-row="1" data-col="1">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="power-matrix-cell" data-row="1" data-col="2">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="power-matrix-cell" data-row="2" data-col="0">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="power-matrix-cell" data-row="2" data-col="1">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="power-matrix-cell" data-row="2" data-col="2">
+            </div>
+        </div>
+        <button onclick="solvePowerMethod()">Find Eigenvalue</button>
+    </div>
+    <div class="method-result" id="power-method-result">
+        <div class="iterations"></div>
+    </div>
+</div>

@@ -19,6 +19,9 @@ A web-based calculator for solving systems of linear equations using various num
   - Numerical Integration Methods:
     - Trapezoidal Rule
     - Simpson's Rule
+  - Numerical Difference Methods:
+    - Forward Difference
+    - Backward Difference
 - Displays detailed iteration steps
 - Shows convergence status
 - Real-time calculation

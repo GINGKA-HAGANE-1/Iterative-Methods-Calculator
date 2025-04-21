@@ -351,11 +351,27 @@ def lagrange_interpolation(x_values, y_values, x_target):
 def interpolate():
     try:
         data = request.get_json()
-        x_values = np.array(data['x_values'])
-        y_values = np.array(data['y_values'])
-        x_target = data['x_target']
+        # Add validation for x_values and y_values
+        if 'x_values' not in data or 'y_values' not in data:
+            return jsonify({
+                'error': 'Missing x_values or y_values'
+            }), 400
+            
+        if len(data['x_values']) == 0 or len(data['y_values']) == 0:
+            return jsonify({
+                'error': 'Empty x_values or y_values'
+            }), 400
+
+        x_values = np.array([float(x) for x in data['x_values']])
+        y_values = np.array([float(y) for y in data['y_values']])
+        x_target = float(data['x_target'])
         method = data['method']
         
+        if len(x_values) != len(y_values):
+            return jsonify({
+                'error': 'Number of x values must match number of y values'
+            }), 400
+
         if method == 'forward':
             result = newton_forward_interpolation(x_values, y_values, x_target)
         elif method == 'backward':
@@ -365,6 +381,9 @@ def interpolate():
         else:
             result = lagrange_interpolation(x_values, y_values, x_target)
         
+        # Add x_target to the response
+        result['x_target'] = x_target
+        result['points'] = list(zip(x_values.tolist(), y_values.tolist()))
         return jsonify(result)
     except Exception as e:
         return jsonify({
@@ -384,7 +403,7 @@ def trapezoidal_rule(f, a, b, n):
     # Show x values and corresponding y values
     steps.append("\nPoints calculation:")
     for i in range(n+1):
-        steps.append(f"x{i} = {x[i]:.4f}, f(x{i}) = {y[i]:.4f}")
+        steps.append(f"x{i} = {x[i]:.5f}, f(x{i}) = {y[i]:.5f}")
     
     # Show trapezoidal areas
     steps.append("\nCalculating areas of individual trapezoids:")
@@ -392,7 +411,7 @@ def trapezoidal_rule(f, a, b, n):
     for i in range(n):
         area = (h/2) * (y[i] + y[i+1])
         individual_areas.append(area)
-        steps.append(f"Trapezoid {i+1}: (h/2)(f(x{i}) + f(x{i+1})) = ({h}/2)({y[i]:.4f} + {y[i+1]:.4f}) = {area:.4f}")
+        steps.append(f"Trapezoid {i+1}: (h/2)(f(x{i}) + f(x{i+1})) = ({h}/2)({y[i]:.5f} + {y[i+1]:.5f}) = {area:.5f}")
     
     # Calculate final result
     result = sum(individual_areas)
@@ -402,14 +421,14 @@ def trapezoidal_rule(f, a, b, n):
     steps.append(f"∫f(x)dx ≈ (h/2)[f(x₀) + 2(f(x₁) + ... + f(xₙ₋₁)) + f(xₙ)]")
     
     # Show detailed calculation
-    middle_terms = ' + '.join([f"{y[i]:.4f}" for i in range(1, n)])
+    middle_terms = ' + '.join([f"{y[i]:.5f}" for i in range(1, n)])
     steps.append(f"\nDetailed Calculation:")
-    steps.append(f"= ({h}/2)[{y[0]:.4f} + 2({middle_terms}) + {y[-1]:.4f}]")
-    steps.append(f"= {result:.6f}")
+    steps.append(f"= ({h:.5f}/2)[{y[0]:.5f} + 2({middle_terms}) + {y[-1]:.5f}]")
+    steps.append(f"= {result:.5f}")
     
     return {
         "steps": steps,
-        "result": float(result)
+        "result": round(float(result), 5)  # Ensure result is also rounded to 5 decimal places
     }
 
 def simpsons_rule(f, a, b, n):
@@ -421,13 +440,13 @@ def simpsons_rule(f, a, b, n):
     y = f(x)
     
     steps = []
-    steps.append(f"h = (b - a)/n = ({b} - {a})/{n} = {h}")
+    steps.append(f"h = (b - a)/n = ({b} - {a})/{n} = {h:.5f}")
     steps.append(f"Dividing interval [{a}, {b}] into {n} equal parts")
     
     # Show all points and function values
     steps.append("\nPoints calculation:")
     for i in range(n+1):
-        steps.append(f"x{i} = {x[i]:.4f}, f(x{i}) = {y[i]:.4f}")
+        steps.append(f"x{i} = {x[i]:.5f}, f(x{i}) = {y[i]:.5f}")
     
     # Group terms
     first = y[0]
@@ -437,10 +456,10 @@ def simpsons_rule(f, a, b, n):
     
     # Show grouping of terms
     steps.append("\nGrouping terms:")
-    steps.append(f"First term (f₀): {first:.4f}")
-    steps.append(f"Last term (fₙ): {last:.4f}")
-    steps.append(f"Odd-indexed terms (4×): {', '.join([f'{v:.4f}' for v in odd_terms])}")
-    steps.append(f"Even-indexed terms (2×): {', '.join([f'{v:.4f}' for v in even_terms])}")
+    steps.append(f"First term (f₀): {first:.5f}")
+    steps.append(f"Last term (fₙ): {last:.5f}")
+    steps.append(f"Odd-indexed terms (4×): {', '.join([f'{v:.5f}' for v in odd_terms])}")
+    steps.append(f"Even-indexed terms (2×): {', '.join([f'{v:.5f}' for v in even_terms])}")
     
     # Calculate components
     odd_sum = 4 * sum(odd_terms)
@@ -452,38 +471,211 @@ def simpsons_rule(f, a, b, n):
     
     # Show detailed calculation
     steps.append(f"\nDetailed Calculation:")
-    steps.append(f"= (h/3)[{first:.4f} + 4({' + '.join([f'{v:.4f}' for v in odd_terms])}) + "
-                f"2({' + '.join([f'{v:.4f}' for v in even_terms])}) + {last:.4f}]")
-    steps.append(f"= ({h}/3)[{first:.4f} + {odd_sum:.4f} + {even_sum:.4f} + {last:.4f}]")
+    steps.append(f"= ({h:.5f}/3)[{first:.5f} + 4({' + '.join([f'{v:.5f}' for v in odd_terms])}) + "
+                f"2({' + '.join([f'{v:.5f}' for v in even_terms])}) + {last:.5f}]")
+    steps.append(f"= ({h:.5f}/3)[{first:.5f} + {odd_sum:.5f} + {even_sum:.5f} + {last:.5f}]")
     
     result = (h/3) * (first + odd_sum + even_sum + last)
-    steps.append(f"= {result:.6f}")
+    steps.append(f"= {result:.5f}")
     
     return {
         "steps": steps,
-        "result": float(result)
+        "result": round(float(result), 5)
     }
+
+# Add new route for numerical differentiation
+@app.route('/differentiate', methods=['POST'])
+def differentiate():
+    try:
+        data = request.get_json()
+        
+        if 'x_values' not in data or 'y_values' not in data:
+            return jsonify({
+                'error': 'Missing x_values or y_values'
+            }), 400
+            
+        x_values = np.array([float(x) for x in data['x_values']])
+        y_values = np.array([float(y) for y in data['y_values']])
+        x_target = float(data['x_target'])
+        method = data['method']
+        
+        if len(x_values) != len(y_values):
+            return jsonify({
+                'error': 'Number of x values must match number of y values'
+            }), 400
+            
+        if method == 'forward':
+            result = newton_forward_differentiation(x_values, y_values, x_target)
+        else:
+            result = newton_backward_differentiation(x_values, y_values, x_target)
+            
+        result['points'] = list(zip(x_values.tolist(), y_values.tolist()))
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({
+            'error': str(e)
+        }), 400
+
+def newton_forward_differentiation(x_values, y_values, x_target):
+    h = x_values[1] - x_values[0]  # Step size
+    steps = []
+    
+    # Calculate forward differences
+    differences = [y_values]
+    for i in range(1, len(y_values)):
+        diff = np.diff(differences[-1])
+        differences.append(diff)
+    
+    steps.append(f"Step size h = {h}")
+    steps.append("\nForward Differences Table:")
+    
+    # Show differences table
+    for i, diff in enumerate(differences):
+        steps.append(f"Δ^{i}y: {', '.join([f'{v:.5f}' for v in diff])}")
+    
+    # Calculate derivatives
+    first_deriv = differences[1][0] / h
+    second_deriv = differences[2][0] / (h * h)
+    third_deriv = differences[3][0] / (h * h * h)
+    
+    # Show detailed calculations
+    steps.append("\nDerivative Calculations:")
+    steps.append(f"First Derivative: f'(x₀) = Δy₀/h = {differences[1][0]:.5f}/{h} = {first_deriv:.5f}")
+    steps.append(f"Second Derivative: f''(x₀) = Δ²y₀/h² = {differences[2][0]:.5f}/{h*h} = {second_deriv:.5f}")
+    steps.append(f"Third Derivative: f'''(x₀) = Δ³y₀/h³ = {differences[3][0]:.5f}/{h*h*h} = {third_deriv:.5f}")
+    
+    # Calculate f(x) using Taylor series
+    x_diff = x_target - x_values[0]
+    fx_value = y_values[0]  # f(x₀)
+    
+    # Add Taylor series terms
+    fx_value += first_deriv * x_diff
+    fx_value += (second_deriv * x_diff * x_diff) / 2
+    fx_value += (third_deriv * x_diff * x_diff * x_diff) / 6
+    
+    steps.append("\nFunction Value Calculation:")
+    steps.append(f"f(x) = f(x₀) + f'(x₀)(x-x₀) + (f''(x₀)/2!)(x-x₀)² + (f'''(x₀)/3!)(x-x₀)³")
+    steps.append(f"f({x_target}) = {y_values[0]:.5f} + {first_deriv:.5f}({x_diff:.5f}) + "
+                f"({second_deriv:.5f}/2)({x_diff:.5f})² + ({third_deriv:.5f}/6)({x_diff:.5f})³")
+    steps.append(f"f({x_target}) = {fx_value:.5f}")
+    
+    return {
+        "steps": steps,
+        "first_derivative": round(float(first_deriv), 5),
+        "second_derivative": round(float(second_deriv), 5),
+        "third_derivative": round(float(third_deriv), 5),
+        "fx_value": round(float(fx_value), 5)
+    }
+
+def newton_backward_differentiation(x_values, y_values, x_target):
+    h = x_values[1] - x_values[0]  # Step size
+    steps = []
+    
+    # Calculate backward differences
+    differences = [y_values]
+    for i in range(1, len(y_values)):
+        diff = np.diff(differences[-1])
+        differences.append(diff)
+    
+    steps.append(f"Step size h = {h}")
+    steps.append("\nBackward Differences Table:")
+    
+    # Show differences table
+    for i, diff in enumerate(differences):
+        steps.append(f"∇^{i}y: {', '.join([f'{v:.5f}' for v in diff])}")
+    
+    # Calculate first derivative using the complete formula
+    first_deriv = 0
+    for i in range(1, len(differences)):
+        coef = 1 / i
+        first_deriv += coef * differences[i][-1]
+    first_deriv /= h
+    
+    # Calculate all higher derivatives
+    derivatives = []
+    for n in range(2, len(differences)):
+        deriv = 0
+        for i in range(n, len(differences)):
+            coef = math.comb(i-1, n-1)
+            deriv += coef * differences[i][-1]
+        deriv /= (h**n)
+        derivatives.append(deriv)
+    
+    # Show formula and calculation for first derivative
+    steps.append("\nFirst Derivative Formula:")
+    steps.append(f"f'(xₙ) = (1/h)[∇yₙ + (1/2)∇²yₙ + (1/3)∇³yₙ + ...]")
+    steps.append(f"f'(xₙ) = {first_deriv:.5f}")
+    
+    # Show all higher derivatives
+    for i, deriv in enumerate(derivatives, 2):
+        steps.append(f"\n{i}th Derivative Approximation:")
+        steps.append(f"f^({i})(xₙ) = {deriv:.5f}")
+    
+    result = {
+        "steps": steps,
+        "first_derivative": round(float(first_deriv), 5),
+    }
+    
+    # Add all higher derivatives to result
+    for i, deriv in enumerate(derivatives, 2):
+        result[f"derivative_{i}"] = round(float(deriv), 5)
+    
+    return result
 
 # Add new route for numerical integration
 @app.route('/integrate', methods=['POST'])
 def integrate():
     try:
         data = request.get_json()
-        a = float(data['lower_limit'])
-        b = float(data['upper_limit'])
-        n = int(data['intervals'])
-        method = data['method']
-              
+        
+        # Validate required fields
+        required_fields = ['lower_limit', 'upper_limit', 'intervals', 'function', 'method']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({'error': f'Missing required field: {field}'}), 400
+
+        # Parse mathematical expressions in limits
+        def parse_math_expression(expr):
+            if isinstance(expr, (int, float)):
+                return float(expr)
+            
+            expr = str(expr).strip().lower()
+            
+            # Handle all pi variations first
+            expr = expr.replace('π', 'pi').replace('pi/2', str(np.pi/2))
+            
+            # If it's just pi, return pi value
+            if expr == 'pi':
+                return float(np.pi)
+            
+            try:
+                # For other expressions containing pi
+                if 'pi' in expr:
+                    expr = expr.replace('pi', str(np.pi))
+                return float(eval(expr))
+            except:
+                raise ValueError(f"Invalid expression: {expr}")
+
+        try:
+            a = parse_math_expression(data['lower_limit'])
+            b = parse_math_expression(data['upper_limit'])
+            n = int(data['intervals'])
+            method = data['method']
+        except ValueError:
+            return jsonify({'error': 'Invalid numeric values provided'}), 400
+
         def f(x):
-            func_str = data['function']  
-            # Add pi handling
+            func_str = data['function']
+            # Handle both π and pi symbols
+            func_str = func_str.replace('π', 'pi')
             func_str = func_str.replace('pi', str(np.pi))
-            func_str = func_str.replace('log(', 'log10(')  # Base-10 log first
-            func_str = func_str.replace('ln(', 'log(')    # Natural log after
-            func_str = func_str.replace('e^', 'exp')      # Exponential
+            func_str = func_str.replace('log(', 'log10(')
+            func_str = func_str.replace('ln(', 'log(')
+            func_str = func_str.replace('e^', 'exp')
             func_str = func_str.replace('e', str(np.e))
             
-            # Update trig functions
+            # Rest of the function remains the same
             trig_funcs = {
                 'sin': 'sin',
                 'cos': 'cos',

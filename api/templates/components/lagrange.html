@@ -1,0 +1,107 @@
+<div id="lagrange" class="tab-content">
+    <div class="input-section">
+        <h2>Lagrange Interpolation</h2>
+        <div class="data-input">
+            <div class="input-group">
+                <label>Number of Points:</label>
+                <input type="text" inputmode="decimal" pattern="[0-9]*" min="2" value="3" id="l-points" class="form-control" onchange="updateLagrangePoints()">
+            </div>
+            <div class="points-container" id="l-points-container">
+                <!-- Points will be dynamically added here -->
+            </div>
+            <div class="input-group">
+                <label>Interpolation Point (x):</label>
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" id="l-x-value" class="form-control">
+            </div>
+        </div>
+        <button onclick="calculateLagrange()" class="calculate-btn">Calculate</button>
+    </div>
+    <div class="result-section">
+        <h3>Results</h3>
+        <div id="l-result" class="result-display">
+            <!-- Results will be displayed here -->
+        </div>
+        <div id="l-steps" class="steps-display">
+            <!-- Calculation steps will be shown here -->
+        </div>
+    </div>
+</div>
+
+<script>
+function updateLagrangePoints() {
+    const n = parseInt(document.getElementById('l-points').value);
+    const container = document.getElementById('l-points-container');
+    container.innerHTML = '';
+    
+    for (let i = 0; i < n; i++) {
+        container.innerHTML += `
+            <div class="point-pair">
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="l-x-point" placeholder="x${i}" required>
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="l-y-point" placeholder="y${i}" required>
+            </div>
+        `;
+    }
+}
+
+function calculateLagrange() {
+    const x_values = Array.from(document.querySelectorAll('.l-x-point'))
+                         .map(input => parseFloat(input.value));
+    const y_values = Array.from(document.querySelectorAll('.l-y-point'))
+                         .map(input => parseFloat(input.value));
+    const x_target = parseFloat(document.getElementById('l-x-value').value);
+
+    // Additional validation for x_target
+    if (!x_target && x_target !== 0) {
+        document.getElementById('l-result').innerHTML = 
+            '<div class="error">Please enter a valid interpolation point (x)</div>';
+        return;
+    }
+
+    // Validate inputs
+    if (x_values.some(isNaN) || y_values.some(isNaN) || isNaN(x_target)) {
+        document.getElementById('l-result').innerHTML = 
+            '<div class="error">Please fill in all values correctly</div>';
+        return;
+    }
+
+    fetch('/interpolate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            x_values: x_values,
+            y_values: y_values,
+            x_target: x_target,
+            method: 'lagrange'
+        })
+    })
+    .then(response => response.json())
+    .then(data => displayLagrangeResults(data))
+    .catch(error => {
+        document.getElementById('l-result').innerHTML = 
+            '<div class="error">An error occurred during calculation</div>';
+    });
+}
+
+function displayLagrangeResults(data) {
+    if (data.error) {
+        document.getElementById('l-result').innerHTML = 
+            `<div class="error">${data.error}</div>`;
+        return;
+    }
+
+    const resultDiv = document.getElementById('l-result');
+    const stepsDiv = document.getElementById('l-steps');
+    
+    // Display steps
+    stepsDiv.innerHTML = '<h4>Calculation Steps:</h4>' + 
+        data.steps.map(step => `<div class="step">${step}</div>`).join('');
+    
+    // Display final result
+    resultDiv.innerHTML = `<div class="final-result">
+        Result: y(${data.x_target}) = ${data.result.toFixed(4)}
+    </div>`;
+}
+
+// Initialize points on page load
+document.addEventListener('DOMContentLoaded', updateLagrangePoints);
+</script>

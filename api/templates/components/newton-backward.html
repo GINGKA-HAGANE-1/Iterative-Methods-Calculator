@@ -1,0 +1,28 @@
+<div id="newton-backward" class="tab-content">
+    <div class="input-section">
+        <h2>Newton Backward Interpolation</h2>
+        <div class="data-input">
+            <div class="input-group">
+                <label>Number of Points:</label>
+                <input type="text" inputmode="decimal" pattern="[0-9]*" min="2" value="3" id="nb-points" class="form-control">
+            </div>
+            <div class="points-container" id="nb-points-container">
+                <!-- Points will be dynamically added here -->
+            </div>
+            <div class="input-group">
+                <label>Interpolation Point (x):</label>
+                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" id="nb-x-value" class="form-control">
+            </div>
+        </div>
+        <button onclick="calculateNewtonBackward()" class="calculate-btn">Calculate</button>
+    </div>
+    <div class="result-section">
+        <h3>Results</h3>
+        <div id="nb-result" class="result-display">
+            <!-- Results will be displayed here -->
+        </div>
+        <div id="nb-steps" class="steps-display">
+            <!-- Calculation steps will be shown here -->
+        </div>
+    </div>
+</div>
