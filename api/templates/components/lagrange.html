@@ -4,14 +4,14 @@
         <div class="data-input">
             <div class="input-group">
                 <label>Number of Points:</label>
-                <input type="text" inputmode="decimal" pattern="[0-9]*" min="2" value="3" id="l-points" class="form-control" onchange="updateLagrangePoints()">
+                <input type="text" min="2" value="3" id="l-points" class="form-control" onchange="updateLagrangePoints()">
             </div>
             <div class="points-container" id="l-points-container">
                 <!-- Points will be dynamically added here -->
             </div>
             <div class="input-group">
                 <label>Interpolation Point (x):</label>
-                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" id="l-x-value" class="form-control">
+                <input type="text" id="l-x-value" class="form-control">
             </div>
         </div>
         <button onclick="calculateLagrange()" class="calculate-btn">Calculate</button>
@@ -36,8 +36,8 @@ function updateLagrangePoints() {
     for (let i = 0; i < n; i++) {
         container.innerHTML += `
             <div class="point-pair">
-                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="l-x-point" placeholder="x${i}" required>
-                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="l-y-point" placeholder="y${i}" required>
+                <input type="text" class="l-x-point" placeholder="x${i}" required>
+                <input type="text" class="l-y-point" placeholder="y${i}" required>
             </div>
         `;
     }

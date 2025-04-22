@@ -4,14 +4,14 @@
         <div class="data-input">
             <div class="input-group">
                 <label>Number of Points:</label>
-                <input type="text" inputmode="decimal" pattern="[0-9]*" min="2" value="3" id="nf-points" class="form-control">
+                <input type="text" min="2" value="3" id="nf-points" class="form-control">
             </div>
             <div class="points-container" id="nf-points-container">
                 <!-- Points will be dynamically added here -->
             </div>
             <div class="input-group">
                 <label>Interpolation Point (x):</label>
-                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" id="nf-x-value" class="form-control">
+                <input type="text" id="nf-x-value" class="form-control">
             </div>
         </div>
         <button onclick="calculateNewtonForward()" class="calculate-btn">Calculate</button>

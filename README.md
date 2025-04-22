@@ -8,6 +8,7 @@ A web-based calculator for solving systems of linear equations using various num
 
 - Interactive web interface for matrix and vector input
 - Step-by-step solution visualization
+- Mobile-friendly input system
 - Supports multiple numerical methods:
   - Jacobi Method
   - Gauss-Seidel Method

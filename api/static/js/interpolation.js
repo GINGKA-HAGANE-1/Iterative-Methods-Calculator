@@ -17,11 +17,11 @@ function updatePoints(method) {
         pointDiv.innerHTML = `
             <div class="input-group">
                 <label>x${i}:</label>
-                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="${method}-x form-control" data-index="${i}">
+                <input type="text" class="${method}-x form-control" data-index="${i}">
             </div>
             <div class="input-group">
                 <label>y${i}:</label>
-                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" class="${method}-y form-control" data-index="${i}">
+                <input type="text" class="${method}-y form-control" data-index="${i}">
             </div>
         `;
         container.appendChild(pointDiv);

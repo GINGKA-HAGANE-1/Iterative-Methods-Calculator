@@ -4,14 +4,14 @@
         <div class="data-input">
             <div class="input-group">
                 <label>Number of Points:</label>
-                <input type="text" inputmode="decimal" pattern="[0-9]*" min="2" value="3" id="nd-points" class="form-control">
+                <input type="text" min="2" value="3" id="nd-points" class="form-control">
             </div>
             <div class="points-container" id="nd-points-container">
                 <!-- Points will be dynamically added here -->
             </div>
             <div class="input-group">
                 <label>Interpolation Point (x):</label>
-                <input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*|-[0-9]*[.]?[0-9]*" id="nd-x-value" class="form-control">
+                <input type="text" id="nd-x-value" class="form-control">
             </div>
         </div>
         <button onclick="calculateNewtonDivided()" class="calculate-btn">Calculate</button>
