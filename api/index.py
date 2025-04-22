@@ -534,15 +534,20 @@ def newton_forward_differentiation(x_values, y_values, x_target):
     for i, diff in enumerate(differences):
         steps.append(f"Δ^{i}y: {', '.join([f'{v:.5f}' for v in diff])}")
     
-    # Calculate derivatives
-    first_deriv = differences[1][0] / h
+    # Calculate first derivative using the correct formula from textbook
+    # (dy/dx) = (1/h)(Δy₀ - Δ²y₀/2 + Δ³y₀/3)
+    first_deriv = (1/h) * (differences[1][0] - differences[2][0]/2 + differences[3][0]/3)
     second_deriv = differences[2][0] / (h * h)
     third_deriv = differences[3][0] / (h * h * h)
     
     # Show detailed calculations
     steps.append("\nDerivative Calculations:")
-    steps.append(f"First Derivative: f'(x₀) = Δy₀/h = {differences[1][0]:.5f}/{h} = {first_deriv:.5f}")
-    steps.append(f"Second Derivative: f''(x₀) = Δ²y₀/h² = {differences[2][0]:.5f}/{h*h} = {second_deriv:.5f}")
+    steps.append(f"First Derivative: (dy/dx) = (1/h)(Δy₀ - Δ²y₀/2 + Δ³y₀/3)")
+    steps.append(f"= (1/{h})({differences[1][0]} - {differences[2][0]}/2 + {differences[3][0]}/3)")
+    steps.append(f"= (1/{h})({differences[1][0]} - {differences[2][0]/2} + {differences[3][0]/3})")
+    steps.append(f"= {first_deriv:.5f}")
+    
+    steps.append(f"\nSecond Derivative: f''(x₀) = Δ²y₀/h² = {differences[2][0]:.5f}/{h*h} = {second_deriv:.5f}")
     steps.append(f"Third Derivative: f'''(x₀) = Δ³y₀/h³ = {differences[3][0]:.5f}/{h*h*h} = {third_deriv:.5f}")
     
     # Calculate f(x) using Taylor series
@@ -562,9 +567,11 @@ def newton_forward_differentiation(x_values, y_values, x_target):
     
     return {
         "steps": steps,
-        "first_derivative": round(float(first_deriv), 5),
-        "second_derivative": round(float(second_deriv), 5),
-        "third_derivative": round(float(third_deriv), 5),
+        "derivatives": {
+            "derivative_1": round(float(first_deriv), 5),
+            "derivative_2": round(float(second_deriv), 5),
+            "derivative_3": round(float(third_deriv), 5)
+        },
         "fx_value": round(float(fx_value), 5)
     }
 
@@ -585,43 +592,46 @@ def newton_backward_differentiation(x_values, y_values, x_target):
     for i, diff in enumerate(differences):
         steps.append(f"∇^{i}y: {', '.join([f'{v:.5f}' for v in diff])}")
     
-    # Calculate first derivative using the complete formula
-    first_deriv = 0
-    for i in range(1, len(differences)):
-        coef = 1 / i
-        first_deriv += coef * differences[i][-1]
-    first_deriv /= h
+    # Calculate first derivative using the backward difference formula
+    # (dy/dx) = (1/h)(∇yₙ - ∇²yₙ/2 + ∇³yₙ/3)
+    first_deriv = (1/h) * (differences[1][-1] - differences[2][-1]/2 + differences[3][-1]/3)
+    second_deriv = differences[2][-1] / (h * h)
+    third_deriv = differences[3][-1] / (h * h * h)
     
-    # Calculate all higher derivatives
-    derivatives = []
-    for n in range(2, len(differences)):
-        deriv = 0
-        for i in range(n, len(differences)):
-            coef = math.comb(i-1, n-1)
-            deriv += coef * differences[i][-1]
-        deriv /= (h**n)
-        derivatives.append(deriv)
+    # Show detailed calculations
+    steps.append("\nDerivative Calculations:")
+    steps.append(f"First Derivative: (dy/dx) = (1/h)(∇yₙ - ∇²yₙ/2 + ∇³yₙ/3)")
+    steps.append(f"= (1/{h})({differences[1][-1]} - {differences[2][-1]}/2 + {differences[3][-1]}/3)")
+    steps.append(f"= (1/{h})({differences[1][-1]} - {differences[2][-1]/2} + {differences[3][-1]/3})")
+    steps.append(f"= {first_deriv:.5f}")
     
-    # Show formula and calculation for first derivative
-    steps.append("\nFirst Derivative Formula:")
-    steps.append(f"f'(xₙ) = (1/h)[∇yₙ + (1/2)∇²yₙ + (1/3)∇³yₙ + ...]")
-    steps.append(f"f'(xₙ) = {first_deriv:.5f}")
+    steps.append(f"\nSecond Derivative: f''(xₙ) = ∇²yₙ/h² = {differences[2][-1]:.5f}/{h*h} = {second_deriv:.5f}")
+    steps.append(f"Third Derivative: f'''(xₙ) = ∇³yₙ/h³ = {differences[3][-1]:.5f}/{h*h*h} = {third_deriv:.5f}")
     
-    # Show all higher derivatives
-    for i, deriv in enumerate(derivatives, 2):
-        steps.append(f"\n{i}th Derivative Approximation:")
-        steps.append(f"f^({i})(xₙ) = {deriv:.5f}")
+    # Calculate f(x) using Taylor series
+    x_diff = x_target - x_values[-1]
+    fx_value = y_values[-1]  # f(xₙ)
     
-    result = {
+    # Add Taylor series terms
+    fx_value += first_deriv * x_diff
+    fx_value += (second_deriv * x_diff * x_diff) / 2
+    fx_value += (third_deriv * x_diff * x_diff * x_diff) / 6
+    
+    steps.append("\nFunction Value Calculation:")
+    steps.append(f"f(x) = f(xₙ) + f'(xₙ)(x-xₙ) + (f''(xₙ)/2!)(x-xₙ)² + (f'''(xₙ)/3!)(x-xₙ)³")
+    steps.append(f"f({x_target}) = {y_values[-1]:.5f} + {first_deriv:.5f}({x_diff:.5f}) + "
+                f"({second_deriv:.5f}/2)({x_diff:.5f})² + ({third_deriv:.5f}/6)({x_diff:.5f})³")
+    steps.append(f"f({x_target}) = {fx_value:.5f}")
+    
+    return {
         "steps": steps,
-        "first_derivative": round(float(first_deriv), 5),
+        "derivatives": {
+            "derivative_1": round(float(first_deriv), 5),
+            "derivative_2": round(float(second_deriv), 5),
+            "derivative_3": round(float(third_deriv), 5)
+        },
+        "fx_value": round(float(fx_value), 5)
     }
-    
-    # Add all higher derivatives to result
-    for i, deriv in enumerate(derivatives, 2):
-        result[f"derivative_{i}"] = round(float(deriv), 5)
-    
-    return result
 
 # Add new route for numerical integration
 @app.route('/integrate', methods=['POST'])
