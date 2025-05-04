@@ -15,7 +15,7 @@ async function solveEuler() {
     }
 
     try {
-        const response = await fetch('http://127.0.0.1:8080/euler', {
+        const response = await fetch('/euler', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -164,7 +164,7 @@ function calculateEuler() {
     };
 
     // Send request to backend
-    fetch('http://127.0.0.1:8080/euler', {
+    fetch('/euler', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -38,7 +38,7 @@ function solveJacobi() {
         return;
     }
 
-    fetch('http://127.0.0.1:8080/solve', {
+    fetch('/solve', {  // Changed from http://127.0.0.1:8080/solve
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ function solveGaussSeidel() {
         return;
     }
 
-    fetch('http://127.0.0.1:8080/solve', {  // Use the full URL with port
+    fetch('/solve', {  // Changed from http://127.0.0.1:8080/solve
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
