@@ -3,9 +3,26 @@ import numpy as np
 import math
 from euler import euler_method, modified_euler_method
 from flask_cors import CORS, cross_origin  # Add this import
+try:
+    from flask import Flask, request, jsonify, render_template
+    import numpy as np
+    import traceback
+    import sys
+except Exception as e:
+    print(f"Import Error: {str(e)}")
+    raise e
+
 app = Flask(__name__)
-# More explicit CORS configuration
-CORS(app, resources={r"/*": {"origins": "*", "allow_headers": "*", "methods": "*"}}) 
+
+@app.errorhandler(Exception)
+def handle_error(error):
+    print(f"Error: {str(error)}")
+    print(f"Traceback: {traceback.format_exc()}")
+    return jsonify({
+        "error": str(error),
+        "traceback": traceback.format_exc()
+    }), 500
+
 def jacobi_method(A, b, tolerance=1e-6, max_iterations=1000):
     n = len(A)
     x = np.zeros(n)
