@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import numpy as np
 import math
 
-from api.euler import euler_method, modified_euler_method
+from euler import euler_method, modified_euler_method
 from flask_cors import CORS, cross_origin  # Add this import
 try:
     from flask import Flask, request, jsonify, render_template
@@ -14,6 +14,7 @@ except Exception as e:
     raise e
 
 app = Flask(__name__)
+CORS(app)
 
 @app.errorhandler(Exception)
 def handle_error(error):
@@ -887,5 +888,5 @@ def handle_exception(e):
         'details': str(e)
     }), 500
 
-if __name__ == "__main__":
-    app.run(debug=False)
+if __name__ == '__main__':
+    app.run(port=8080)
