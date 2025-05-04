@@ -25,6 +25,10 @@ def handle_error(error):
         "traceback": traceback.format_exc()
     }), 500
 
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
+
 def jacobi_method(A, b, tolerance=1e-6, max_iterations=1000):
     n = len(A)
     x = np.zeros(n)
