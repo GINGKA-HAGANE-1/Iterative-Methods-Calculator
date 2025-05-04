@@ -4,7 +4,12 @@
         {
             "src": "api/index.py",
             "use": "@vercel/python",
-            "config": { "pythonVersion": "3.9" }
+            "config": { 
+                "pythonVersion": "3.9",
+                "maxLambdaSize": "50mb",
+                "includeFiles": ["api/**"],
+                "excludeFiles": ["**/*.pyc", "**/__pycache__/**"]
+            }
         }
     ],
     "routes": [
