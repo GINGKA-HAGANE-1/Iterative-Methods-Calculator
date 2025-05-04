@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 import numpy as np
 import math
-from euler import euler_method, modified_euler_method
+
+from api.euler import euler_method, modified_euler_method
 from flask_cors import CORS, cross_origin  # Add this import
 try:
     from flask import Flask, request, jsonify, render_template
