@@ -858,16 +858,16 @@ def newton_backward_differentiation(x_values, y_values, x_target):
 # Add new route for numerical integration
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)  # Change to port 8080
-    @app.errorhandler(Exception)
-    def handle_exception(e):
-        print(f"Error: {str(e)}")
-        print(traceback.format_exc())
-        return jsonify({
-            "error": str(e),
-            "traceback": traceback.format_exc()
-        }), 500
+# Add this at the end of your file, before if __name__ == "__main__":
+@app.errorhandler(Exception)
+def handle_exception(e):
+    print(f"Error: {str(e)}")
+    import traceback
+    print(traceback.format_exc())
+    return jsonify({
+        'error': 'An unexpected error occurred',
+        'details': str(e)
+    }), 500
 
-    if __name__ == "__main__":
-        app.run(debug=False)
+if __name__ == "__main__":
+    app.run(debug=False)
