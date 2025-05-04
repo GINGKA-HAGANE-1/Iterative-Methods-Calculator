@@ -1,15 +1,44 @@
 // Jacobi Method
 function solveJacobi() {
     const matrix = [];
+    let hasEmptyInputs = false;
+
+    // Add validation and logging
+
     for (let i = 0; i < 3; i++) {
         matrix[i] = [];
         for (let j = 0; j < 3; j++) {
-            matrix[i][j] = parseFloat(document.querySelector(`.jacobi-matrix-cell[data-row="${i}"][data-col="${j}"]`).value);
+            const input = document.querySelector(`.jacobi-matrix-cell[data-row="${i}"][data-col="${j}"]`);
+            const value = parseFloat(input.value);
+            if (isNaN(value)) {
+                input.style.borderColor = 'red';
+                hasEmptyInputs = true;
+            } else {
+                input.style.borderColor = '';
+                matrix[i][j] = value;
+            }
         }
     }
-    const vector = Array.from(document.querySelectorAll('.jacobi-vector-cell')).map(input => parseFloat(input.value));
-    
-    fetch('/solve', {
+
+    const vectorInputs = document.querySelectorAll('.jacobi-vector-cell');
+    const vector = [];
+    vectorInputs.forEach(input => {
+        const value = parseFloat(input.value);
+        if (isNaN(value)) {
+            input.style.borderColor = 'red';
+            hasEmptyInputs = true;
+        } else {
+            input.style.borderColor = '';
+            vector.push(value);
+        }
+    });
+
+    if (hasEmptyInputs) {
+        alert('Please fill in all matrix and vector values with numbers');
+        return;
+    }
+
+    fetch('http://127.0.0.1:8080/solve', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -19,28 +48,69 @@ function solveJacobi() {
             vector: vector
         }),
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
+        if (!data.jacobi) {
+            throw new Error('Invalid response format from server');
+        }
+        
+        const container = document.querySelector(`#jacobi-result .iterations`);
+        
         displayResults('jacobi', data.jacobi);
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while solving the system.');
+        console.error('Error details:', error);
+        alert('Error: ' + error.message);
     });
 }
 
 // Gauss-Seidel Method
+// For the Gauss-Seidel method, update the fetch URL
 function solveGaussSeidel() {
     const matrix = [];
+    let hasEmptyInputs = false;
+
+    // Add validation and logging
+
     for (let i = 0; i < 3; i++) {
         matrix[i] = [];
         for (let j = 0; j < 3; j++) {
-            matrix[i][j] = parseFloat(document.querySelector(`.gauss-matrix-cell[data-row="${i}"][data-col="${j}"]`).value);
+            const input = document.querySelector(`.gauss-matrix-cell[data-row="${i}"][data-col="${j}"]`);
+            const value = parseFloat(input.value);
+            if (isNaN(value)) {
+                input.style.borderColor = 'red';
+                hasEmptyInputs = true;
+            } else {
+                input.style.borderColor = '';
+                matrix[i][j] = value;
+            }
         }
     }
-    const vector = Array.from(document.querySelectorAll('.gauss-vector-cell')).map(input => parseFloat(input.value));
-    
-    fetch('/solve', {
+
+    const vectorInputs = document.querySelectorAll('.gauss-vector-cell');
+    const vector = [];
+    vectorInputs.forEach(input => {
+        const value = parseFloat(input.value);
+        if (isNaN(value)) {
+            input.style.borderColor = 'red';
+            hasEmptyInputs = true;
+        } else {
+            input.style.borderColor = '';
+            vector.push(value);
+        }
+    });
+
+    if (hasEmptyInputs) {
+        alert('Please fill in all matrix and vector values with numbers');
+        return;
+    }
+
+    fetch('http://127.0.0.1:8080/solve', {  // Use the full URL with port
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -50,13 +120,21 @@ function solveGaussSeidel() {
             vector: vector
         }),
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
+        if (!data.gauss_seidel) {
+            throw new Error('Invalid response format from server');
+        }
         displayResults('gauss-seidel', data.gauss_seidel);
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while solving the system.');
+        console.error('Error details:', error);
+        alert('Error: ' + error.message);
     });
 }
 

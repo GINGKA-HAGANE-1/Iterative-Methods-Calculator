@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="/static/css/matrix-inputs.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/euler.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/interpolation.css') }}">
 </head>
 <body>
@@ -56,11 +57,16 @@
                     <span class="method-name">Numerical Differentiation</span>
                 </button>
                 
-             
+                
                 
                 <button class="tab-button" onclick="switchTab('numerical-integration')">
                     <span class="method-icon">NI</span>
                     <span class="method-name">Numerical Integration</span>
+                </button>
+
+                <button class="tab-button" onclick="switchTab('euler')">
+                    <span class="method-icon">E</span>
+                    <span class="method-name">Euler Method</span>
                 </button>
             </div>
         </div>
@@ -77,6 +83,7 @@
                 {% include 'components/lagrange.html' %}
                 {% include 'components/numerical-integration.html' %}
                 {% include 'components/numerical-differentiation.html' %}
+                {% include 'components/euler.html' %}
             </div>
         </div>
     </div>
@@ -84,6 +91,7 @@
     <script src="{{ url_for('static', filename='js/methods.js') }}"></script>
     <script src="{{ url_for('static', filename='js/interpolation.js') }}"></script>
     <script src="{{ url_for('static', filename='js/integration.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/euler.js') }}"></script>
     <script>
         function switchTab(tabId) {
             // Hide all tab contents
@@ -118,6 +126,7 @@
     </script>
     <!-- Add this before the closing </body> tag -->
     <script src="{{ url_for('static', filename='js/differentiation.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/methods.js') }}"></script>
 </body>
 
 </html>

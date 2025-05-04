@@ -28,14 +28,16 @@ A web-based calculator for solving systems of linear equations using various num
 - Real-time calculation
 - Difference table visualization for interpolation
 - Detailed step-by-step calculations
+- Enhanced result display with larger text for better readability in iterative methods
 
 ## 📊 Numerical Methods Features
 
 ### Linear Systems
 - Interactive matrix and vector input
 - Convergence checking
-- Detailed iteration steps
+- Detailed iteration steps with improved formatting
 - Solution visualization
+- Larger, more readable result text for Jacobi, Gauss-Seidel, and Power methods
 
 ### Interpolation
 - Dynamic point input system

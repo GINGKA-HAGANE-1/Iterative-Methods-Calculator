@@ -1,0 +1,71 @@
+<div id="euler" class="tab-content">
+    <div class="euler-container">
+        <div class="input-section">
+            <h2>Euler's Method for ODEs</h2>
+            <div class="function-input">
+                <label for="euler-function">Enter the differential equation dy/dx = f(x,y):</label>
+                <input type="text" id="euler-function" placeholder="e.g., x + y" class="enhanced-input">
+            </div>
+            
+            <!-- Add this after your function input field -->
+            <div class="function-examples">
+                <h4>Example Functions:</h4>
+                <div class="example-group">
+                    <span class="example-code">x + y</span>
+                    <span class="example-code">x*y</span>
+                    <span class="example-code">sin(x) + y</span>
+                    <span class="example-code">cos(x)*y</span>
+                    <span class="example-code">log(x+1)*y</span>
+                    <span class="example-code">exp(-x)*y</span>
+                </div>
+            </div>
+            
+            <div class="initial-conditions">
+                <h3>Initial Conditions</h3>
+                <div class="input-group">
+                    <label for="euler-x0">Initial x (x₀):</label>
+                    <input type="text" id="euler-x0" step="any" class="enhanced-input" placeholder="0">
+                </div>
+                <div class="input-group">
+                    <label for="euler-y0">Initial y (y₀):</label>
+                    <input type="text" id="euler-y0" step="any" class="enhanced-input" placeholder="1">
+                </div>
+            </div>
+            
+            <div class="method-params">
+                <h3>Method Parameters</h3>
+                <div class="input-group">
+                    <label for="euler-h">Step size (h):</label>
+                    <input type="text" id="euler-h" step="any" min="0" class="enhanced-input" placeholder="0.2">
+                </div>
+                <div class="input-group">
+                    <label for="euler-n">Number of steps:</label>
+                    <input type="text" id="euler-n" min="1" class="enhanced-input" placeholder="5">
+                </div>
+            </div>
+            
+            <div class="method-selection">
+                <h3>Method</h3>
+                <div class="radio-group">
+                    <input type="radio" id="standard-euler" name="euler-method" value="euler" checked>
+                    <label for="standard-euler">Standard Euler Method</label>
+                    
+                    <input type="radio" id="modified-euler" name="euler-method" value="modified">
+                    <label for="modified-euler">Modified Euler Method (Heun's)</label>
+                </div>
+            </div>
+            
+            <button onclick="calculateEuler()" class="solve-button">Calculate</button>
+        </div>
+        
+        <div class="results-section">
+            
+            <div class="results-card full-width">
+                <h3>Results</h3>
+                <div id="euler-result">
+                    <div class="iterations"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
