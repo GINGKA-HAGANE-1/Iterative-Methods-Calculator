@@ -6,9 +6,7 @@
             "use": "@vercel/python",
             "config": { 
                 "pythonVersion": "3.9",
-                "maxLambdaSize": "50mb",
-                "includeFiles": ["api/**"],
-                "excludeFiles": ["**/*.pyc", "**/__pycache__/**"]
+                "maxLambdaSize": "50mb"
             }
         }
     ],
@@ -17,5 +15,10 @@
             "src": "/(.*)",
             "dest": "api/index.py"
         }
-    ]
+    ],
+    "functions": {
+        "api/**": {
+            "excludeFiles": "{.next,*.cache,node_modules,public,__pycache__,*.pyc,tests,docs}/**"
+        }
+    }
 }
