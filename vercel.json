@@ -18,7 +18,9 @@
     ],
     "functions": {
         "api/**": {
-            "excludeFiles": "{.next,*.cache,node_modules,public,__pycache__,*.pyc,tests,docs}/**"
+            "excludeFiles": "{.next,*.cache,node_modules,public,__pycache__,*.pyc,tests,docs}/**",
+            "memory": 1024,
+            "maxDuration": 10
         }
     }
 }
