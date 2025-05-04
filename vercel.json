@@ -1,4 +1,12 @@
-{
+{  
+    "version": 2,
+    "functions": {
+        "api/**": {
+            "excludeFiles": "{.next,*.cache,node_modules,public,__pycache__,*.pyc,tests,docs}/**"
+        }
+    }
+}
+{  
     "version": 2,
     "builds": [
         {
